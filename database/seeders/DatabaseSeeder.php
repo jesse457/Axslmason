@@ -17,8 +17,9 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
         $password = config('secrets.admin_password');
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Ponituspint',
             'email' => 'Ponituspint@gmail.com',
+            'role' => 'admin',
             'password' => Hash::make($password),
         ]);
     }
