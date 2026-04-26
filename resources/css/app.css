@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* 1. IMPORT INTER FONT */
+/* This specific URL imports the Variable version of Inter for the best UI look */
+
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+  /* Luxury Color Palette */
+  --color-luxury-dark: #020617;
+  --color-luxury-blue: #0a121d;
+  --color-accent-cyan: #22d3ee;
+  --color-accent-soft: rgba(34, 211, 238, 0.1);
+
+  /* 2. ASSIGN INTER TO SANS FONT */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --tracking-luxury: 0.3em;
+  --tracking-tighter: -0.05em;
+
+  /* Animation for Luxury feel */
+  --animate-spin-slow: spin 8s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+}
+
+/* Custom Luxury Utility Classes */
+@utility radial-spotlight {
+  background: radial-gradient(
+    circle at center,
+    rgba(34, 211, 238, 0.15) 0%,
+    transparent 70%
+  );
+}
+
+@utility glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Global Reset to Dark Theme */
+@layer base {
+  body {
+    /* 3. APPLY FONT-SANS GLOBALLY */
+    @apply bg-luxury-dark text-white antialiased font-sans;
+    background-attachment: fixed;
+  }
+}
