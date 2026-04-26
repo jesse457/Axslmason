@@ -30,7 +30,7 @@ class HomeController extends Controller
                 'category' => $p->category?->name,
                 'brand_name' => $p->brand?->name,
             ]),
-            'collections' => Category::where('is_featured', true)->limit(6)->get()->map(fn($cat) => [
+            'collections' => Category::limit(6)->get()->map(fn($cat) => [
                 'id' => $cat->id,
                 'name' => $cat->name,
                 'slug' => $cat->slug,
