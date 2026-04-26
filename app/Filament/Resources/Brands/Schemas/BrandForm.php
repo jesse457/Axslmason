@@ -4,9 +4,11 @@ namespace App\Filament\Resources\Brands\Schemas;
 
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Filament\Schemas\Components\Utilities\Set;
 
 class BrandForm
 {
@@ -15,16 +17,27 @@ class BrandForm
         return $schema
             ->components([
                 Section::make('Core Information')
+                    ->description('Manage brand details and branding assets.')
                     ->schema([
-               TextInput::make('name')
-                ->required()
-                ->live(onBlur: true)
-                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
-            TextInput::make('slug')->required()->unique(ignoreRecord: true),
-            FileUpload::make('logo_url')
-                ->image()
-                ->directory('brands'),
-            ])
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
+                        TextInput::make('slug')
+                        ->disabled()
+                            ->required()
+                            ->unique(ignoreRecord: true),
+
+                        FileUpload::make('logo_url')
+                            ->label('Brand Logo')
+                            ->image()
+                            ->disk('public')
+                            ->imageEditor()
+                            ->directory('brands')
+                            ->columnSpanFull(),
+                    ])->columnSpanFull()
             ]);
     }
 }
