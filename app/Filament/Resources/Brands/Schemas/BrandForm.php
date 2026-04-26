@@ -22,13 +22,11 @@ class BrandForm
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255)
+                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
-                        TextInput::make('slug')
-                        ->disabled()
-                            ->required()
-                            ->unique(ignoreRecord: true),
+                         TextInput::make('slug')->required()->readOnly()->unique(ignoreRecord: true),
 
                         FileUpload::make('logo_url')
                             ->label('Brand Logo')

@@ -20,14 +20,14 @@ class CategoryForm
                 ->schema([
                     TextInput::make('name')
                         ->required()
-                        ->maxLength(255)
-
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                            ->maxLength(255)
+                             ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                     TextInput::make('slug')
                         ->required()
-                        ->disabled()
+                        ->readOnly()
                         ->unique(ignoreRecord: true),
 
                     FileUpload::make('image_url')

@@ -25,7 +25,7 @@ class ProductForm
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                        TextInput::make('slug')->required()->disabled()->unique(ignoreRecord: true),
+                        TextInput::make('slug')->required()->readOnly()->unique(ignoreRecord: true),
                         Select::make('category_id')->relationship('category', 'name')->required(),
                         Select::make('brand_id')->relationship('brand', 'name')->required(),
                         RichEditor::make('description')->required()->columnSpanFull(),
