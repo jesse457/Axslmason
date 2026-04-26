@@ -70,7 +70,7 @@ class BrandInfolist
                                         ->since(),
                                 ]),
                         ])->columnSpan(['default' => 3, 'md' => 1]),
-                    ]),
+                    ])->columnSpan(['default' => 12, 'lg' => 4]),
             ]);
     }
 }

@@ -26,7 +26,12 @@ class BrandForm
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
-                         TextInput::make('slug')->required()->readOnly()->unique(ignoreRecord: true),
+                         TextInput::make('slug')
+    ->required()
+    ->unique(ignoreRecord: true)
+    ->disabled()       // Keeps it uneditable by the user
+    ->dehydrated()     // REQUIRED: Tells Filament to include this in the SQL insert
+    ->helperText('The slug is auto-generated from the name.'),
 
                         FileUpload::make('logo_url')
                             ->label('Brand Logo')
