@@ -5,16 +5,17 @@ import {
     ShieldCheck,
     Truck,
     Settings,
-    ChevronLeft,
     ChevronRight,
     ShoppingCart,
     Zap,
     ArrowRight,
     Wrench,
-    Tag,
     Star,
     Quote,
-    Mail
+    Mail,
+    Globe,
+    Activity,
+    HardHat
 } from 'lucide-react';
 
 interface Product {
@@ -23,10 +24,8 @@ interface Product {
     description?: string;
     price: number;
     original_price?: number;
-    discount_percent?: number;
     image: string;
     slug: string;
-    category?: string;
     brand_name?: string;
 }
 
@@ -65,8 +64,7 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
         const numPrice = typeof price === 'string' ? parseFloat(price) : price;
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2
+            currency: 'USD'
         }).format(numPrice);
     };
 
@@ -82,57 +80,81 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
 
     return (
         <AppLayout>
-            <Head title="AUGIMEN | Industrial Drilling Equipment" />
+            <Head>
+                <title>AUGIMEN | Global Heavy Industrial, Mining & Medical Equipment</title>
+                <meta name="description" content="Premium supplier of Oil & Gas drilling tools, heavy construction machinery, mining equipment, and advanced medical imaging systems. Global logistics and certified industrial hardware." />
+                <meta name="keywords" content="Oil and Gas Equipment, Drill Rigs, Construction Machinery, Excavators, Mining Equipment, Medical Scanners, MRI, Industrial Tools" />
+
+                {/* Structured Data for SEO */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Store",
+                        "name": "AUGIMEN",
+                        "description": "Distributor of heavy-duty industrial and medical equipment worldwide.",
+                        "url": "https://axelmason.com",
+                        "hasOfferCatalog": {
+                            "@type": "OfferCatalog",
+                            "name": "Industrial & Medical Equipment",
+                            "itemListElement": [
+                                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Oil & Gas Exploration Equipment" } },
+                                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Construction & Mining Machinery" } },
+                                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Advanced Medical Systems" } }
+                            ]
+                        }
+                    })}
+                </script>
+            </Head>
 
             <div className="min-h-screen bg-white text-slate-900 font-sans antialiased">
 
-                {/* 1. HERO SECTION */}
-                <section className="relative h-[80vh] min-h-[600px] flex items-center overflow-hidden bg-slate-950">
+                {/* 1. HERO SECTION (Optimized Wording) */}
+                <section className="relative h-[85vh] min-h-[650px] flex items-center overflow-hidden bg-slate-950">
                     <div className="absolute inset-0 z-0">
                         <img
                             src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070&auto=format&fit=crop"
-                            alt="Industrial Job Site"
+                            alt="Industrial Heavy Machinery Operation"
                             className="w-full h-full object-cover opacity-30"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/80 to-transparent"></div>
                     </div>
 
                     <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-                        <div className="max-w-2xl">
+                        <div className="max-w-3xl">
                             <div className="flex items-center gap-2 text-orange-500 font-bold tracking-[0.2em] text-[10px] mb-4 uppercase">
                                 <span className="w-8 h-[1px] bg-orange-500"></span>
-                                Heavy-Duty Performance
+                                Industrial Authority
                             </div>
-                            <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[1] mb-6 uppercase">
-                                Precision <br />
-                                <span className="text-orange-600">Power Tools.</span>
+                            <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter leading-[0.9] mb-6 uppercase">
+                                Global <br />
+                                <span className="text-orange-600">Equipment Hub.</span>
                             </h1>
-                            <p className="text-lg text-slate-300 mb-8 leading-relaxed max-w-lg">
-                                Engineered for demanding operations. High-torque, industrial-grade hardware that never quits.
+                            <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed max-w-xl">
+                                From Oil Rigs and Mining Drills to MRI Scanners. We supply certified, high-performance hardware for the world's most demanding sectors.
                             </p>
                             <div className="flex flex-wrap gap-4">
-                                <Link href="/products" className="bg-orange-600 text-white px-8 py-4 font-bold uppercase tracking-widest text-xs hover:bg-orange-500 transition-all flex items-center gap-2 shadow-xl">
-                                    Browse Fleet <ChevronRight className="w-4 h-4" />
+                                <Link href="/products" className="bg-orange-600 text-white px-10 py-5 font-bold uppercase tracking-widest text-xs hover:bg-orange-500 transition-all flex items-center gap-2 shadow-2xl">
+                                    Browse Inventory <ChevronRight className="w-4 h-4" />
                                 </Link>
-                                <Link href="/quote" className="bg-white/5 backdrop-blur-sm border border-white/20 text-white px-8 py-4 font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-slate-900 transition-all">
-                                    Request Quote
+                                <Link href="/quote" className="bg-white/5 backdrop-blur-sm border border-white/20 text-white px-10 py-5 font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-slate-900 transition-all">
+                                    Inquire Now
                                 </Link>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 2. THE TRUST BAR */}
+                {/* 2. TRUST BAR */}
                 <div className="bg-slate-50 border-b border-slate-200">
                     <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4">
                         {[
-                            { icon: <Truck />, t: "Rapid Delivery", d: "Direct to jobsite" },
-                            { icon: <ShieldCheck />, t: "Certified Gear", d: "OSHA Compliant" },
-                            { icon: <Zap />, t: "Peak Efficiency", d: "High-torque output" },
-                            { icon: <Settings />, t: "Fleet Support", d: "24/7 technical aid" }
+                            { icon: <Globe />, t: "Global Logistics", d: "Worldwide shipping" },
+                            { icon: <ShieldCheck />, t: "Certified Gear", d: "ISO & OSHA Compliant" },
+                            { icon: <Activity />, t: "Medical Grade", d: "Advanced diagnostics" },
+                            { icon: <HardHat />, t: "Heavy Duty", d: "Mining & Construction" }
                         ].map((item, i) => (
-                            <div key={i} className="p-6 flex items-center gap-4 border-r border-slate-200 last:border-r-0 hover:bg-white transition-colors">
-                                <div className="text-orange-600">{React.cloneElement(item.icon as React.ReactElement, { className: "w-5 h-5" })}</div>
+                            <div key={i} className="p-8 flex items-center gap-4 border-r border-slate-200 last:border-r-0 hover:bg-white transition-colors">
+                                <div className="text-orange-600">{React.cloneElement(item.icon as React.ReactElement, { className: "w-6 h-6" })}</div>
                                 <div>
                                     <h4 className="font-bold text-[10px] uppercase tracking-widest text-slate-900">{item.t}</h4>
                                     <p className="text-[10px] text-slate-500 font-medium mt-0.5">{item.d}</p>
@@ -142,102 +164,102 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                     </div>
                 </div>
 
-                {/* 3. BRANDS SECTION (NEW) */}
-                <section className="py-12 border-b border-slate-100">
+                {/* 3. TOPICAL AUTHORITY SECTION (SEO POWERHOUSE) */}
+                <section className="py-12 bg-white border-b border-slate-100">
                     <div className="max-w-7xl mx-auto px-6">
-                        <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-8 font-mono">Authorized Distribution Partner For</p>
-                        <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                            {brands.map((brand) => (
-                                <div key={brand.id} className="h-8 md:h-12 flex items-center">
-                                    {brand.logo ? (
-                                        <img src={brand.logo} alt={brand.name} className="h-full object-contain" />
-                                    ) : (
-                                        <span className="font-black text-xl italic text-slate-800">{brand.name}</span>
-                                    )}
-                                </div>
-                            ))}
-                            {/* Fallback internal logos if no dynamic brands */}
-                            {!brands.length && (
-                                <>
-                                    <div className="flex items-center gap-2"><Wrench className="w-5 h-5" /><span className="font-black text-lg italic">TOOL-SPEC</span></div>
-                                    <div className="flex items-center gap-2"><Settings className="w-5 h-5" /><span className="font-black text-lg italic">CORE-DRILL</span></div>
-                                    <div className="flex items-center gap-2"><Zap className="w-5 h-5" /><span className="font-black text-lg italic">MAX-FLITE</span></div>
-                                </>
-                            )}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+                            <div>
+                                <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-orange-600 rounded-full"></span> Oil & Gas
+                                </h3>
+                                <p className="text-[11px] text-slate-500 leading-relaxed">Drill Bits, Mud Pumps, Truck Rigs, BOP Systems, Shale Shakers, and Iron Roughnecks.</p>
+                            </div>
+                            <div>
+                                <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-orange-600 rounded-full"></span> Construction
+                                </h3>
+                                <p className="text-[11px] text-slate-500 leading-relaxed">Excavators, Telehandlers, Rough Terrain Cranes, Tandem Rollers, and Bulldozers.</p>
+                            </div>
+                            <div>
+                                <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-orange-600 rounded-full"></span> Mining
+                                </h3>
+                                <p className="text-[11px] text-slate-500 leading-relaxed">Screening Equipment, Blast Hole Drills, Scraper Winches, and Roadheaders.</p>
+                            </div>
+                            <div>
+                                <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-orange-600 rounded-full"></span> Medical
+                                </h3>
+                                <p className="text-[11px] text-slate-500 leading-relaxed">MRI/CT Scanners, Dialysis Machines, Ventilators, and Surgical Imaging.</p>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 4. FEATURED PRODUCT CAROUSEL */}
+                {/* 4. FEATURED PRODUCTS */}
                 {featuredProducts.length > 0 && (
                     <section className="py-24 px-6 bg-white overflow-hidden">
                         <div className="max-w-7xl mx-auto relative">
                             <div className="mb-16">
-                                <h2 className="text-[10px] font-black tracking-[0.3em] text-orange-600 uppercase mb-2">Spotlight Equipment</h2>
-                                <p className="text-3xl md:text-4xl font-black text-slate-900 uppercase tracking-tighter">Featured Hardware</p>
+                                <h2 className="text-[10px] font-black tracking-[0.3em] text-orange-600 uppercase mb-2">Inventory Spotlight</h2>
+                                <p className="text-3xl md:text-4xl font-black text-slate-900 uppercase tracking-tighter">Premium Hardware</p>
                             </div>
 
                             <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-                                {featuredProducts.map((product) => {
-                                    const currentPrice = Number(product.price);
-                                    const originalPrice = Number(product.original_price);
-                                    const isOnSale = originalPrice > 0 && originalPrice > currentPrice;
-
-                                    return (
-                                        <div key={product.id} className="w-full shrink-0">
-                                            <div className="grid lg:grid-cols-2 gap-16 items-center">
-                                                <div className="relative aspect-square bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center p-12">
-                                                    {isOnSale && (
-                                                        <div className="absolute top-6 left-6 z-20 bg-orange-600 text-white px-4 py-2 font-black uppercase tracking-widest text-[10px] shadow-lg rounded">
-                                                            Sale Offer
-                                                        </div>
-                                                    )}
-                                                    <img src={product.image} alt={product.name} className="w-full h-full object-contain drop-shadow-2xl" />
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-orange-600 font-bold text-xs uppercase tracking-widest mb-4">{product.brand_name || 'Industrial Grade'}</span>
-                                                    <h3 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 uppercase tracking-tighter leading-tight">{product.name}</h3>
-                                                    <div className="flex items-end gap-4 mb-8">
-                                                        <div className="flex flex-col">
-                                                            {isOnSale && <span className="text-slate-400 line-through font-bold text-sm mb-1">{formatPrice(originalPrice)}</span>}
-                                                            <span className="text-5xl font-black text-slate-950 tracking-tighter">{formatPrice(currentPrice)}</span>
-                                                        </div>
-                                                    </div>
-                                                    <p className="text-slate-600 text-lg mb-10 leading-relaxed">{product.description || "The industry benchmark for professional drilling performance and durability."}</p>
-                                                    <Link href={`/products/${product.slug}`} className="bg-slate-950 text-white py-5 px-10 font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition-all flex items-center justify-center gap-3 shadow-xl w-fit">
-                                                        <ShoppingCart className="w-5 h-5" /> View Specifications
-                                                    </Link>
-                                                </div>
+                                {featuredProducts.map((product) => (
+                                    <div key={product.id} className="w-full shrink-0">
+                                        <div className="grid lg:grid-cols-2 gap-16 items-center">
+                                            <div className="relative aspect-square bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center p-12">
+                                                <img
+                                                    src={product.image}
+                                                    alt={`${product.name} - ${product.brand_name} Industrial Equipment`}
+                                                    className="w-full h-full object-contain drop-shadow-2xl"
+                                                    loading="eager"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-orange-600 font-bold text-xs uppercase tracking-widest mb-4">{product.brand_name || 'Industrial Grade'}</span>
+                                                <h3 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 uppercase tracking-tighter leading-tight">{product.name}</h3>
+                                                <span className="text-5xl font-black text-slate-950 tracking-tighter mb-8">{formatPrice(product.price)}</span>
+                                                <p className="text-slate-600 text-lg mb-10 leading-relaxed">{product.description || "The industry benchmark for performance, reliability, and precision in field operations."}</p>
+                                                <Link href={`/products/${product.slug}`} className="bg-slate-950 text-white py-5 px-10 font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition-all flex items-center justify-center gap-3 shadow-xl w-fit">
+                                                    Technical Specifications
+                                                </Link>
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </section>
                 )}
 
-                {/* 5. CATEGORIES GRID (ENHANCED) */}
+                {/* 5. CATEGORIES GRID */}
                 <section className="bg-slate-950 py-24 px-6">
                     <div className="max-w-7xl mx-auto">
                         <div className="flex justify-between items-end mb-16">
                             <div>
-                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Shop by <span className="text-orange-500">Department</span></h2>
-                                <p className="text-slate-400 mt-2 font-medium">Browse our complete inventory of professional hardware.</p>
+                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Shop <span className="text-orange-500">Departments</span></h2>
+                                <p className="text-slate-400 mt-2 font-medium">Browse specialized inventory by industrial sector.</p>
                             </div>
                             <Link href="/products" className="hidden md:flex text-white font-bold uppercase tracking-widest text-[10px] items-center gap-2 hover:text-orange-500 transition-colors">
-                                View Full Fleet <ArrowRight className="w-3 h-3" />
+                                Full Catalog <ArrowRight className="w-3 h-3" />
                             </Link>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             {collections.map((cat) => (
-                                <Link key={cat.id} href={`/products?category=${cat.slug}`} className="group relative h-[400px] overflow-hidden rounded-xl">
-                                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-700" />
+                                <Link key={cat.id} href={`/products?category=${cat.slug}`} className="group relative h-[450px] overflow-hidden rounded-xl">
+                                    <img
+                                        src={cat.image}
+                                        alt={`Browse ${cat.name} Fleet`}
+                                        className="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-700"
+                                        loading="lazy"
+                                    />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-10 flex flex-col justify-end">
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">{cat.name}</h3>
                                         <div className="w-12 h-1 bg-orange-600 mb-4 group-hover:w-24 transition-all duration-500"></div>
                                         <span className="flex items-center gap-2 text-white/60 font-bold text-[10px] uppercase tracking-[0.2em] group-hover:text-white transition-colors">
-                                            Explore Collection <ArrowRight className="w-3 h-3" />
+                                            View Department <ArrowRight className="w-3 h-3" />
                                         </span>
                                     </div>
                                 </Link>
@@ -246,16 +268,16 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                     </div>
                 </section>
 
-                {/* 6. TESTIMONIALS / REVIEWS (NEW) */}
-                <section className="py-24 bg-slate-50 overflow-hidden">
+                {/* 6. REVIEWS */}
+                <section className="py-24 bg-slate-50">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="text-center mb-16">
                             <Quote className="w-12 h-12 text-orange-200 mx-auto mb-4" />
-                            <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">Trusted in the Field</h2>
+                            <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">Field-Proven Reliability</h2>
                         </div>
                         <div className="grid md:grid-cols-2 gap-8">
                             {reviews.map((review) => (
-                                <div key={review.id} className="bg-white p-10 border border-slate-100 shadow-sm rounded-xl">
+                                <div key={review.id} className="bg-white p-10 border border-slate-100 shadow-sm rounded-xl hover:shadow-md transition-shadow">
                                     <div className="flex gap-1 mb-4">
                                         {[...Array(review.rating)].map((_, i) => <Star key={i} className="w-4 h-4 fill-orange-500 text-orange-500" />)}
                                     </div>
@@ -270,26 +292,27 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                     </div>
                 </section>
 
-                {/* 7. NEWSLETTER (NEW) */}
+                {/* 7. NEWSLETTER */}
                 <section className="py-20 px-6">
-                    <div className="max-w-7xl mx-auto bg-orange-600 rounded-3xl p-8 md:p-16 relative overflow-hidden">
+                    <div className="max-w-7xl mx-auto bg-orange-600 rounded-3xl p-8 md:p-16 relative overflow-hidden shadow-2xl">
                         <div className="absolute right-0 top-0 opacity-10 -rotate-12 translate-x-10 -translate-y-10">
                             <Mail className="w-64 h-64 text-white" />
                         </div>
                         <div className="relative z-10 max-w-xl">
-                            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter mb-4">Join the Fleet</h2>
-                            <p className="text-orange-100 mb-8 font-medium">Get technical updates, exclusive discounts, and early access to new industrial equipment.</p>
+                            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter mb-4">Industrial Updates</h2>
+                            <p className="text-orange-100 mb-8 font-medium">Get technical bulletins, inventory alerts, and specialized equipment offers directly to your inbox.</p>
                             <form className="flex flex-col sm:flex-row gap-4">
                                 <input
                                     type="email"
-                                    placeholder="Enter work email"
+                                    placeholder="work@company.com"
                                     className="flex-1 px-6 py-4 rounded-lg bg-white border-none focus:ring-2 focus:ring-slate-900 text-slate-900 font-bold"
+                                    aria-label="Email for newsletter"
                                 />
                                 <button className="bg-slate-950 text-white px-8 py-4 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-all">
-                                    Subscribe
+                                    Join The Fleet
                                 </button>
                             </form>
-                            <p className="text-[10px] text-orange-200 mt-4 font-bold uppercase tracking-widest">No Spam. Just high-performance updates.</p>
+                            <p className="text-[10px] text-orange-200 mt-4 font-bold uppercase tracking-widest">Global Supply Solutions. No Spam.</p>
                         </div>
                     </div>
                 </section>
