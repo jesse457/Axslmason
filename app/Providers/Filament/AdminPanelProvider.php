@@ -27,7 +27,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-
             // --- UI MODERNIZATION ---
             ->brandName('Augimen Admin') // Your brand name
             ->font('Inter') // Clean, modern font

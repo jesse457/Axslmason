@@ -43,7 +43,7 @@ const Checkout = () => {
 
     return (
         <AppLayout>
-            <Head title="Checkout | AUGIMEN" />
+            <Head title="Checkout | AXELMASON" />
 
             <div className="mx-auto max-w-[1200px] px-6 py-10 md:px-10">
                 <Link

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Brand; // Added
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -41,7 +41,6 @@ class HomeController extends Controller
                 'name' => $b->name,
                 'logo' => $b->logo_url ? asset('storage/' . $b->logo_url) : null,
             ]),
-            // Mocking reviews - in a real app, you'd have a Review model
             'reviews' => [
                 [
                     'id' => 1,
@@ -61,7 +60,7 @@ class HomeController extends Controller
         ]);
     }
 
-     public function search(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('q');
         if (!$query) return response()->json(['products' => []]);
@@ -78,5 +77,74 @@ class HomeController extends Controller
             ]);
 
         return response()->json(['products' => $products]);
+    }
+
+    // --- DEALS & QUOTES ---
+
+    public function deals()
+    {
+        // Get products that have an original price (indicating a sale)
+        $deals = Product::whereNotNull('original_price')
+            ->where('original_price', '>', 0)
+            ->with('brand')
+            ->latest()
+            ->get();
+
+        return Inertia::render('Deals', [
+            'deals' => $deals->map(fn($p) => [
+                'id' => $p->id,
+                'name' => $p->name,
+                'slug' => $p->slug,
+                'price' => $p->price,
+                'original_price' => $p->original_price,
+                'discount_percent' => $p->discount_percent,
+                'image' => $p->main_image ? asset('storage/' . $p->main_image) : '/images/placeholder.jpg',
+                'brand_name' => $p->brand?->name,
+            ])
+        ]);
+    }
+
+    public function quote()
+    {
+        return Inertia::render('Quote');
+    }
+
+    // --- COMPANY PAGES ---
+
+    public function about()
+    {
+        return Inertia::render('About');
+    }
+
+    public function contact()
+    {
+        return Inertia::render('Contact');
+    }
+
+    public function blog()
+    {
+        return Inertia::render('Blog');
+    }
+
+    // --- LEGAL & POLICIES ---
+
+    public function privacyPolicy()
+    {
+        return Inertia::render('PrivacyPolicy');
+    }
+
+    public function shippingPolicy()
+    {
+        return Inertia::render('ShippingPolicy');
+    }
+
+    public function refundsPolicy()
+    {
+        return Inertia::render('RefundsPolicy');
+    }
+
+    public function terms()
+    {
+        return Inertia::render('Terms');
     }
 }

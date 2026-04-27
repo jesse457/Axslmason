@@ -81,7 +81,7 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
     return (
         <AppLayout>
             <Head>
-                <title>AUGIMEN | Global Heavy Industrial, Mining & Medical Equipment</title>
+                <title>AXELMASON | Global Heavy Industrial, Mining & Medical Equipment</title>
                 <meta name="description" content="Premium supplier of Oil & Gas drilling tools, heavy construction machinery, mining equipment, and advanced medical imaging systems. Global logistics and certified industrial hardware." />
                 <meta name="keywords" content="Oil and Gas Equipment, Drill Rigs, Construction Machinery, Excavators, Mining Equipment, Medical Scanners, MRI, Industrial Tools" />
 
@@ -90,7 +90,7 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                     {JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Store",
-                        "name": "AUGIMEN",
+                        "name": "AXELMASON",
                         "description": "Distributor of heavy-duty industrial and medical equipment worldwide.",
                         "url": "https://axelmason.com",
                         "hasOfferCatalog": {

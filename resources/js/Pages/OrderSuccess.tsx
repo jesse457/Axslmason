@@ -6,7 +6,7 @@ import { CheckCircle, Package, ArrowRight, ShoppingBag } from 'lucide-react';
 const OrderSuccess = ({ order }: { order: any }) => {
     return (
         <AppLayout>
-            <Head title="Order Confirmed | AUGIMEN" />
+            <Head title="Order Confirmed | AXELMASON" />
 
             <div className="max-w-[800px] mx-auto px-6 py-20 text-center">
                 <div className="flex justify-center mb-6">

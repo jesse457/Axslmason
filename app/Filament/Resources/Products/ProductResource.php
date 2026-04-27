@@ -20,7 +20,7 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-  protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
 
     protected static ?string $recordTitleAttribute = 'Product';
 
@@ -41,14 +41,14 @@ class ProductResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
+        return[
             //
         ];
     }
 
     public static function getPages(): array
     {
-        return [
+        return[
             'index' => ListProducts::route('/'),
             'create' => CreateProduct::route('/create'),
             'view' => ViewProduct::route('/{record}'),

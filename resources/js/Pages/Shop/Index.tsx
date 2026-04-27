@@ -32,7 +32,7 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters }) => {
     useEffect(() => {
         setPriceRange([
             Number(filters.min_price) || 0,
-            Number(filters.max_price) || 1000
+            Number(filters.max_price) || 1000000
         ]);
     }, [filters.min_price, filters.max_price]);
 
@@ -73,7 +73,7 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters }) => {
 
     return (
         <AppLayout>
-            <Head title="Shop | Augimen" />
+            <Head title="Shop | AXELMASON" />
 
             <div className="bg-white min-h-screen">
                 {/* SORT BAR */}

@@ -5,38 +5,28 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-// --- HOMEPAGE ---
-// This handles the hero section and featured products shown in your HomeController
+// --- HOMEPAGE & SEARCH ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/search', [HomeController::class, 'search']);
+
+// --- CORE PAGES ---
+Route::get('/deals', [HomeController::class, 'deals'])->name('deals');
+Route::get('/quote', [HomeController::class, 'quote'])->name('quote');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
+
+// --- LEGAL & POLICIES ---
+Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
+Route::get('/shipping-policy', [HomeController::class, 'shippingPolicy'])->name('shipping.policy');
+Route::get('/refunds-policy', [HomeController::class, 'refundsPolicy'])->name('refunds.policy');
+Route::get('/terms-and-conditions', [HomeController::class, 'terms'])->name('terms');
 
 // --- PRODUCT CATALOG (SHOP) ---
-// Note: Changed from '/shop' to '/products' to match common ecommerce standards
-// and the controller's logic which expects category/brand filters.
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-
-// --- PRODUCT DETAIL PAGE ---
-// This handles the individual product view based on the slug
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 // --- CHECKOUT & ORDERS ---
-// 1. The UI Page: Displays the checkout form and order summary
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-
-// 2. The Logic: This handles the POST request when clicking "Place Secure Order"
-// You should create a 'store' method in your CheckoutController to handle DB saving
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-
-// --- (Optional) SUCCESS PAGE ---
-// A page to redirect users to after a successful purchase
 Route::get('/order-confirmation/{order_number}', [CheckoutController::class, 'success'])->name('checkout.success');
-
-
-
-
-Route::get('/search', [HomeController::class,'search']);
