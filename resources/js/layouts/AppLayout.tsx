@@ -16,10 +16,11 @@ import {
     User,
     Zap,
     ChevronRight,
-    ShieldCheck,
+    ShieldCheck, BadgeCheck, Lock
 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { Toaster } from 'react-hot-toast';
+import { route } from 'ziggy-js';
 
 interface AppLayoutProps {
     children: React.ReactNode;
@@ -238,12 +239,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
             {/* Desktop Links - Updated with About, Blog, Contact */}
             <div className="hidden items-center gap-6 text-[10px] font-black tracking-widest text-slate-400 uppercase lg:flex">
-                <Link
-                    href="/"
-                    className={`transition-colors hover:text-orange-600 ${isActive('/') ? 'text-slate-900' : ''}`}
-                >
-                    Home
-                </Link>
+               
                 <Link
                     href="/products"
                     className={`transition-colors hover:text-orange-600 ${isPrefixActive('/products') ? 'text-slate-900' : ''}`}
@@ -280,13 +276,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
 
         <div className="flex items-center gap-6">
-            {/* Quote Button (Desktop) */}
-            <Link
-                href="/quote"
-                className="hidden rounded-xl bg-slate-950 px-8 py-4 text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-xl shadow-slate-200 transition-all hover:bg-orange-600 md:flex"
-            >
-                Request Quote
-            </Link>
 
             {/* Icons */}
             <div className="flex items-center gap-5 text-slate-900 md:border-l md:border-slate-200 md:pl-6">
@@ -541,151 +530,195 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 {children}
             </main>
 
-            {/* --- FOOTER --- */}
-            <footer className="bg-slate-950 px-8 pt-24 pb-12 text-white">
-                <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-4">
-                    <div>
-                        <div className="flex h-10 w-35 items-center justify-center overflow-hidden">
-                            <img
-                                src="/assets/axel.png"
-                                alt="AXELMANSON Logo"
-                                className="h-full w-auto scale-[4.0] transform object-contain brightness-[100%] contrast-[100%] hue-rotate-[10deg] saturate-[5000%] sepia"
-                                style={{
-                                    filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(102%)',
-                                }}
-                            />
-                        </div>
-                        <p className="max-w-xs text-xs leading-relaxed font-bold tracking-tight text-slate-400 uppercase">
-                            Global hub for certified heavy-duty industrial and
-                            medical hardware. Engineering reliability since
-                            1998.
-                        </p>
-                    </div>
-                    <div>
-                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                            Inventory
-                        </h4>
-                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                            <li>
-                                <Link
-                                    href="/products"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    All Products
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/deals"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    Spotlight Deals
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/blog"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    Technical Bulletins
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                            Support & Legal
-                        </h4>
-                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                            <li>
-                                <Link
-                                    href="/about"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    About the Fleet
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/contact"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    Technical Support
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/shipping-policy"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    Shipping Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/refunds-policy"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    Returns & Refunds
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/privacy-policy"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    Privacy Protocol
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/terms-and-conditions"
-                                    className="flex items-center gap-2 transition-colors hover:text-white"
-                                >
-                                    <ChevronRight className="h-3 w-3 text-orange-600" />{' '}
-                                    Terms & Conditions
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                            Industrial Updates
-                        </h4>
-                        <p className="mb-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                            Receive supply chain alerts.
-                        </p>
-                        <div className="flex gap-2 rounded-2xl border border-white/10 bg-white/5 p-2">
-                            <input
-                                type="email"
-                                placeholder="work@company.com"
-                                className="flex-1 border-none bg-transparent px-4 text-xs font-bold text-white placeholder:text-slate-500 focus:ring-0"
-                            />
-                            <button className="rounded-xl bg-orange-600 p-4 transition-all hover:bg-orange-500">
-                                <Mail className="h-5 w-5 text-white" />
-                            </button>
-                        </div>
-                    </div>
+          {/* --- FOOTER --- */}
+<footer className="bg-slate-950 px-8 pt-24 pb-12 text-white">
+    <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-4">
+
+        {/* Brand Column */}
+        <div className="space-y-6">
+            <div className="flex h-10 w-35 items-center justify-center overflow-hidden">
+                <img
+                    src="/assets/axel.png"
+                    alt="AXELMANSON Industrial Logo"
+                    className="h-full w-auto object-contain"
+                    style={{
+                        filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(102%)',
+                    }}
+                />
+            </div>
+            <p className="max-w-xs text-xs leading-relaxed font-bold tracking-tight text-slate-400 uppercase">
+                Global supplier of certified heavy-duty industrial and medical-grade hardware. Engineering reliability since 1998.
+            </p>
+
+            {/* Trust Badges */}
+            <div className="flex flex-wrap gap-3 pt-2">
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                    <ShieldCheck className="h-3.5 w-3.5 text-orange-600" />
+                    ISO 9001
                 </div>
-                <div className="mx-auto mt-20 flex max-w-[1600px] flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-[10px] font-black tracking-widest text-slate-600 uppercase md:flex-row">
-                    <p>
-                        © {new Date().getFullYear()} AXELMANSON INDUSTRIAL. ALL
-                        RIGHTS RESERVED.
-                    </p>
-                    <p className="flex items-center gap-2">
-                        <ShieldCheck className="h-4 w-4 text-orange-600" /> ISO
-                        9001 COMPLIANT
-                    </p>
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                    <BadgeCheck className="h-3.5 w-3.5 text-orange-600" />
+                    FDA Registered
                 </div>
-            </footer>
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                    <Lock className="h-3.5 w-3.5 text-orange-600" />
+                    Secure Checkout
+                </div>
+            </div>
+        </div>
+
+        {/* Products Column */}
+        <div>
+            <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                Shop
+            </h4>
+            <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                <li>
+                    <Link
+                        href={route('products.index')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        All Products
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('deals')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Spotlight Deals
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('quote')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Request Bulk Quote
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('blog')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Technical Bulletins
+                    </Link>
+                </li>
+            </ul>
+        </div>
+
+        {/* Support & Legal Column */}
+        <div>
+            <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                Support & Legal
+            </h4>
+            <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                <li>
+                    <Link
+                        href={route('about')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        About AXELMANSON
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('contact')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Technical Support
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('shipping-policy')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Shipping Policy
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('return-policy')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Returns & Refunds
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('privacy')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Privacy Policy
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href={route('terms')}
+                        className="flex items-center gap-2 transition-colors hover:text-white"
+                    >
+                        <ChevronRight className="h-3 w-3 text-orange-600" />
+                        Terms & Conditions
+                    </Link>
+                </li>
+            </ul>
+        </div>
+
+        {/* Newsletter Column */}
+        <div>
+            <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                Industrial Updates
+            </h4>
+            <p className="mb-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                Receive supply chain alerts & new stock notifications.
+            </p>
+            <form className="flex gap-2 rounded-2xl border border-white/10 bg-white/5 p-2" onSubmit={(e) => { e.preventDefault(); }}>
+                <input
+                    type="email"
+                    placeholder="work@company.com"
+                    className="flex-1 border-none bg-transparent px-4 text-xs font-bold text-white placeholder:text-slate-500 focus:ring-0"
+                    aria-label="Work email address"
+                />
+                <button
+                    type="submit"
+                    className="rounded-xl bg-orange-600 p-4 transition-all hover:bg-orange-500"
+                    aria-label="Subscribe to newsletter"
+                >
+                    <Mail className="h-5 w-5 text-white" />
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {/* Bottom Bar */}
+    <div className="mx-auto mt-20 flex max-w-[1600px] flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-[10px] font-black tracking-widest text-slate-600 uppercase md:flex-row">
+        <p>
+            © {new Date().getFullYear()} AXELMANSON INDUSTRIAL. ALL RIGHTS RESERVED.
+        </p>
+        <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5">
+                <ShieldCheck className="h-4 w-4 text-orange-600" />
+                ISO 9001 COMPLIANT
+            </span>
+            <span className="hidden md:inline text-slate-700">|</span>
+            <span className="flex items-center gap-1.5">
+                <BadgeCheck className="h-4 w-4 text-orange-600" />
+                FDA REGISTERED
+            </span>
+        </div>
+    </div>
+</footer>
         </div>
     );
 };

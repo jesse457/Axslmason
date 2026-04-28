@@ -10,37 +10,47 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
-    {
-        $productsQuery = Product::with(['category', 'brand'])
-            ->filter($request->only(['category', 'brand', 'min_price', 'max_price', 'sort']));
+ // In ShopController@index
 
-        $products = $productsQuery->latest()->get()->map(fn($p) => $this->transformProduct($p));
+public function index(Request $request)
+{
+    $productsQuery = Product::with(['category', 'brand'])
+        ->filter($request->only(['category', 'brand', 'min_price', 'max_price', 'sort']));
 
-        $categories = Category::withCount('products')->get()->map(fn($cat) => [
-            'id' => $cat->id,
-            'name' => $cat->name,
-            'slug' => $cat->slug,
-            'products_count' => $cat->products_count,
-            'image' => $cat->image ? asset('storage/' . $cat->image) : null,
-        ]);
+    // Apply sorting
+    match ($request->sort) {
+        'price_low' => $productsQuery->orderBy('price', 'asc'),
+        'price_high' => $productsQuery->orderBy('price', 'desc'),
+        'name_a_z' => $productsQuery->orderBy('name', 'asc'),
+        default => $productsQuery->latest(),
+    };
 
-        $brands = Brand::all()->map(fn($b) => [
-            'id' => $b->id,
-            'name' => $b->name,
-            'slug' => $b->slug,
-            'image' => $b->logo_url ? asset('storage/' . $b->logo_url) : null,
-        ]);
+    // Paginate with 12 items per page
+    $products = $productsQuery->paginate(12)->withQueryString();
 
-        return Inertia::render('Shop/Index', [
-            'products' => $products,
-            'categories' => $categories,
-            'brands' => $brands,
-            'max_db_price' => Product::max('price') ?? 1000,
-            'filters' => $request->only(['category', 'brand', 'min_price', 'max_price', 'sort']),
-        ]);
-    }
+    $categories = Category::withCount('products')->get()->map(fn($cat) => [
+        'id' => $cat->id,
+        'name' => $cat->name,
+        'slug' => $cat->slug,
+        'products_count' => $cat->products_count,
+        'image' => $cat->image ? asset('storage/' . $cat->image) : null,
+    ]);
 
+    $brands = Brand::all()->map(fn($b) => [
+        'id' => $b->id,
+        'name' => $b->name,
+        'slug' => $b->slug,
+        'image' => $b->logo_url ? asset('storage/' . $b->logo_url) : null,
+    ]);
+
+    return Inertia::render('Shop/Index', [
+        'products' => $products,
+        'categories' => $categories,
+        'brands' => $brands,
+        'max_db_price' => Product::max('price') ?? 1000,
+        'filters' => $request->only(['category', 'brand', 'min_price', 'max_price', 'sort']),
+    ]);
+}
     public function show(string $slug)
     {
         $product = Product::with(['category', 'brand'])

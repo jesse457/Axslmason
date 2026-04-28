@@ -3,6 +3,7 @@ import React from 'react';
 import AppLayout from '@/layouts/AppLayout';
 import { Head } from '@inertiajs/react';
 import { ShieldCheck, Lock, EyeOff } from 'lucide-react';
+import { route } from 'ziggy-js';
 
 const PolicySection = ({ icon: Icon, title, text }) => (
     <div className="flex gap-8 py-10 border-b border-slate-50 last:border-0 group">

@@ -12,10 +12,10 @@ interface PolicyLayoutProps {
 
 const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, lastUpdated, children }) => {
     const policies = [
-        { name: 'Shipping Policy', slug: 'shipping.policy' },
-        // { name: 'Return Policy', slug: 'return-policy' },
-        // { name: 'Terms & Conditions', slug: 'terms' },
-        // { name: 'Privacy Policy', slug: 'privacy' },
+        { name: 'Shipping Policy', slug: 'shipping-policy' },
+        { name: 'Return Policy', slug: 'return-policy' },
+        { name: 'Terms & Conditions', slug: 'terms' },
+        { name: 'Privacy Policy', slug: 'privacy' },
     ];
 
     return (
