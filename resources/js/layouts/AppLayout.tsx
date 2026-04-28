@@ -196,7 +196,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         ) : (
                             <div className="flex flex-col items-start gap-4">
                                 <span className="mb-2 text-[10px] font-black tracking-[0.3em] text-slate-400 uppercase">
-                                    Trending Departments
+                                    Trending Categories
                                 </span>
                                 <div className="flex flex-wrap gap-3">
                                     {categories.slice(0, 6).map((cat) => (

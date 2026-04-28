@@ -36,9 +36,9 @@ class ProductImporter extends Importer
                 ->requiredMapping()
                 ->fillRecordUsing(function (Product $record, ?string $state): void {
                     if (blank($state)) return;
-                    
+
                     $category = Category::firstOrCreate(
-                        ['name' => trim($state)], 
+                        ['name' => trim($state)],
                         ['slug' => Str::slug($state)]
                     );
                     $record->category_id = $category->id;
@@ -126,7 +126,7 @@ class ProductImporter extends Importer
                             $downloadedPaths[] = $url;
                         }
                     }
-                    
+
                     // Assign the array of downloaded paths to the model
                     $record->images = $downloadedPaths;
                 }),
@@ -147,6 +147,8 @@ class ProductImporter extends Importer
 
     public function resolveRecord(): ?Product
     {
+
+    Log::info("Importing row: " . ($this->data['name'] ?? 'Unknown'));
         // 1. Find by slug, or create new instance
         $product = Product::firstOrNew([
             'slug' => $this->data['slug'] ?? Str::slug($this->data['name']),

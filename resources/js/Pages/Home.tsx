@@ -239,7 +239,7 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                     <div className="max-w-7xl mx-auto">
                         <div className="flex justify-between items-end mb-16">
                             <div>
-                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Shop <span className="text-orange-500">Departments</span></h2>
+                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Shop <span className="text-orange-500">Category</span></h2>
                                 <p className="text-slate-400 mt-2 font-medium">Browse specialized inventory by industrial sector.</p>
                             </div>
                             <Link href="/products" className="hidden md:flex text-white font-bold uppercase tracking-widest text-[10px] items-center gap-2 hover:text-orange-500 transition-colors">
@@ -259,7 +259,7 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">{cat.name}</h3>
                                         <div className="w-12 h-1 bg-orange-600 mb-4 group-hover:w-24 transition-all duration-500"></div>
                                         <span className="flex items-center gap-2 text-white/60 font-bold text-[10px] uppercase tracking-[0.2em] group-hover:text-white transition-colors">
-                                            View Department <ArrowRight className="w-3 h-3" />
+                                            View Category <ArrowRight className="w-3 h-3" />
                                         </span>
                                     </div>
                                 </Link>
