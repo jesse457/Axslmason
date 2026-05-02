@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head, router, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/AppLayout';
 import ProductCard from '@/components/ProductCard';
-import { X, ChevronRight, SlidersHorizontal, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
+import { X, ChevronRight, ChevronDown, SlidersHorizontal, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { route } from 'ziggy-js';
 import * as Slider from '@radix-ui/react-slider';
 
@@ -24,9 +24,18 @@ interface PaginatedProducts {
     links: PaginatorLink[];
 }
 
+interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    products_count?: number;
+    subcategories?: Category[];
+    products?: any[];
+}
+
 interface Props {
     products: PaginatedProducts;
-    categories: any[];
+    categories: Category[];
     brands: any[];
     filters: {
         category?: string;
@@ -39,14 +48,19 @@ interface Props {
     max_db_price?: number;
 }
 
-const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_price = 1000 }) => {
+const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_price = 10000000 }) => {
     // 1. Local state for Price Slider (for smooth dragging)
     const [priceRange, setPriceRange] = useState([
         Number(filters.min_price) || 0,
         Number(filters.max_price) || Math.min(max_db_price, 1000)
     ]);
 
-    // 2. Sync local price state if filters change externally (like 'Clear All')
+    // 2. Collapsible Categories State
+    const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+        new Set(filters.category ? [filters.category] : [])
+    );
+
+    // 3. Sync local price state if filters change externally (like 'Clear All')
     useEffect(() => {
         setPriceRange([
             Number(filters.min_price) || 0,
@@ -54,7 +68,20 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
         ]);
     }, [filters.min_price, filters.max_price, max_db_price]);
 
-    // 3. Centralized Filter Function
+    // 4. Toggle category expansion
+    const toggleCategory = (slug: string) => {
+        setExpandedCategories(prev => {
+            const next = new Set(prev);
+            if (next.has(slug)) {
+                next.delete(slug);
+            } else {
+                next.add(slug);
+            }
+            return next;
+        });
+    };
+
+    // 5. Centralized Filter Function
     const updateFilters = (newFilters: object) => {
         const allFilters = { ...filters, ...newFilters, page: null }; // Reset page when filters change
 
@@ -74,7 +101,7 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
         });
     };
 
-    // 4. Multi-select logic for Brands (Amazon style)
+    // 6. Multi-select logic for Brands (Amazon style)
     const handleBrandToggle = (slug: string) => {
         let currentBrands = filters.brand ? filters.brand.split(',').filter(Boolean) : [];
         if (currentBrands.includes(slug)) {
@@ -86,6 +113,7 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
     };
 
     const clearFilters = () => {
+        setExpandedCategories(new Set());
         router.get(route('products.index'), {}, {
             preserveState: true,
             preserveScroll: true,
@@ -93,7 +121,7 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
         });
     };
 
-    // 5. Pagination Handler
+    // 7. Pagination Handler
     const goToPage = (url: string | null) => {
         if (!url) return;
         router.visit(url, {
@@ -102,9 +130,8 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
         });
     };
 
-    // 6. Pagination Component (Inline)
+    // 8. Pagination Component (Inline)
     const Pagination = ({ links, currentPage }: { links: PaginatorLink[]; currentPage: number }) => {
-        // Extract only numeric page links for cleaner display
         const pageLinks = links.filter(link => link.label.match(/^\d+$/));
         const prevLink = links.find(l => l.label === '&laquo; Previous');
         const nextLink = links.find(l => l.label === 'Next &raquo;');
@@ -113,7 +140,6 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
 
         return (
             <div className="flex items-center justify-center gap-1 mt-12 pt-8 border-t border-gray-100">
-                {/* Previous Button */}
                 <button
                     onClick={() => goToPage(prevLink?.url)}
                     disabled={!prevLink?.url}
@@ -127,12 +153,9 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
                     Prev
                 </button>
 
-                {/* Page Numbers - Show smart range */}
                 <div className="flex items-center gap-1">
                     {pageLinks.map((link, i) => {
                         const pageNum = parseInt(link.label);
-
-                        // Always show first, last, current, and neighbors
                         const isFirst = pageNum === 1;
                         const isLast = pageNum === products.last_page;
                         const isCurrent = link.active;
@@ -154,7 +177,6 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
                             );
                         }
 
-                        // Show ellipsis for skipped pages
                         if (i > 0 && pageLinks[i - 1]) {
                             const prevNum = parseInt(pageLinks[i - 1].label);
                             if (pageNum - prevNum > 1) {
@@ -165,7 +187,6 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
                     })}
                 </div>
 
-                {/* Next Button */}
                 <button
                     onClick={() => goToPage(nextLink?.url)}
                     disabled={!nextLink?.url}
@@ -178,6 +199,100 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
                     Next
                     <ChevronRightIcon className="w-3 h-3" />
                 </button>
+            </div>
+        );
+    };
+
+    // 9. Collapsible Category Item Component
+    const CategoryItem: React.FC<{ category: Category; level?: number }> = ({ category, level = 0 }) => {
+        const isExpanded = expandedCategories.has(category.slug);
+        const isActive = filters.category === category.slug;
+        const hasChildren = category.subcategories && category.subcategories.length > 0;
+        const hasProducts = category.products && category.products.length > 0;
+
+        return (
+            <div className="select-none">
+                {/* Category Header */}
+                <button
+                    onClick={() => {
+                        toggleCategory(category.slug);
+                        if (!isExpanded) {
+                            updateFilters({ category: category.slug });
+                        }
+                    }}
+                    className={`w-full flex items-center gap-2 py-2 text-left transition-all ${
+                        level > 0 ? 'pl-6' : ''
+                    } ${isActive ? 'font-bold text-orange-600' : 'text-gray-600 hover:text-black'}`}
+                >
+                    {hasChildren || hasProducts ? (
+                        <ChevronDown
+                            className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                        />
+                    ) : (
+                        <ChevronRight className={`w-3 h-3 ${isActive ? 'opacity-100' : 'opacity-0'}`} />
+                    )}
+                    <span className="text-sm truncate">{category.name}</span>
+                    {category.products_count !== undefined && category.products_count > 0 && (
+                        <span className="ml-auto text-[10px] text-gray-400 font-bold">({category.products_count})</span>
+                    )}
+                </button>
+
+                {/* Collapsible Content */}
+                {isExpanded && (
+                    <div className={`overflow-hidden transition-all duration-200 ${level > 0 ? 'pl-5 border-l border-gray-100 ml-2' : ''}`}>
+                        {/* Subcategories */}
+                        {hasChildren && (
+                            <div className="space-y-1 mt-1">
+                                {category.subcategories!.map((sub) => (
+                                    <CategoryItem key={sub.id} category={sub} level={level + 1} />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Products in Category (if loaded) */}
+                        {hasProducts && (
+                            <div className="mt-2 space-y-2">
+                                {category.products!.slice(0, 3).map((product) => (
+                                    <Link
+                                        key={product.id}
+                                        href={`/products/${product.slug}`}
+                                        className="block group"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                            <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center overflow-hidden">
+                                                <img
+                                                    src={product.main_image || product.image}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-contain mix-blend-multiply"
+                                                />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[11px] font-bold text-gray-700 truncate group-hover:text-orange-600">
+                                                    {product.name}
+                                                </p>
+                                                <p className="text-[10px] font-black text-gray-400">
+                                                    ${Number(product.price).toFixed(2)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                                {category.products!.length > 3 && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateFilters({ category: category.slug });
+                                        }}
+                                        className="w-full text-[10px] font-black text-orange-600 hover:underline text-left pl-2"
+                                    >
+                                        View all {category.products!.length} items →
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         );
     };
@@ -231,34 +346,29 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
                                     )}
                                 </div>
 
-                                {/* CATEGORIES (Amazon-style List) */}
+                                {/* CATEGORIES - Collapsible Tree */}
                                 <section>
-                                    <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">Department</h4>
-                                    <ul className="space-y-2.5">
-                                        <li>
-                                            <button
-                                                onClick={() => updateFilters({ category: null })}
-                                                className={`text-sm flex items-center gap-2 transition-all ${!filters.category ? 'font-bold text-orange-600' : 'text-gray-600 hover:text-black'}`}
-                                            >
-                                                <ChevronRight className={`w-3 h-3 ${!filters.category ? 'opacity-100' : 'opacity-0'}`} />
-                                                All Departments
-                                            </button>
-                                        </li>
+                                    <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">Departments</h4>
+                                    <div className="space-y-1">
+                                        {/* "All Departments" Root */}
+                                        <button
+                                            onClick={() => {
+                                                setExpandedCategories(new Set());
+                                                updateFilters({ category: null });
+                                            }}
+                                            className={`w-full flex items-center gap-2 py-2 text-left text-sm transition-all ${
+                                                !filters.category ? 'font-bold text-orange-600' : 'text-gray-600 hover:text-black'
+                                            }`}
+                                        >
+                                            <ChevronRight className={`w-3 h-3 ${!filters.category ? 'opacity-100' : 'opacity-0'}`} />
+                                            All Departments
+                                        </button>
+
+                                        {/* Category Tree */}
                                         {categories.map((cat) => (
-                                            <li key={cat.id}>
-                                                <button
-                                                    onClick={() => updateFilters({ category: cat.slug })}
-                                                    className={`text-sm flex items-center gap-2 transition-all w-full text-left ${filters.category === cat.slug ? 'font-bold text-orange-600' : 'text-gray-600 hover:text-black'}`}
-                                                >
-                                                    <ChevronRight className={`w-3 h-3 ${filters.category === cat.slug ? 'opacity-100' : 'opacity-0'}`} />
-                                                    {cat.name}
-                                                    {cat.products_count > 0 && (
-                                                        <span className="ml-auto text-[10px] text-gray-400 font-bold">({cat.products_count})</span>
-                                                    )}
-                                                </button>
-                                            </li>
+                                            <CategoryItem key={cat.id} category={cat} />
                                         ))}
-                                    </ul>
+                                    </div>
                                 </section>
 
                                 {/* PRICE RANGE SLIDER */}
@@ -325,7 +435,6 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
                                         ))}
                                     </div>
 
-                                    {/* Pagination Controls */}
                                     {products.last_page > 1 && (
                                         <Pagination links={products.links} currentPage={products.current_page} />
                                     )}
@@ -351,4 +460,4 @@ const Index: React.FC<Props> = ({ products, categories, brands, filters, max_db_
     );
 };
 
-export default Index; 
+export default Index;

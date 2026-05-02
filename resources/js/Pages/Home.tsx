@@ -3,19 +3,19 @@ import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/AppLayout';
 import {
     ShieldCheck,
-    Truck,
+    Globe,
     Settings,
     ChevronRight,
-    ShoppingCart,
-    Zap,
     ArrowRight,
     Wrench,
     Star,
     Quote,
     Mail,
-    Globe,
     Activity,
-    HardHat
+    HardHat,
+    Banknote,
+    Headset,
+    Hammer
 } from 'lucide-react';
 
 interface Product {
@@ -57,7 +57,7 @@ interface HomeProps {
     reviews: Review[];
 }
 
-const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = [] }: HomeProps) => {
+const Home = ({ featuredProducts = [], collections = [], brands =[], reviews = [] }: HomeProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const formatPrice = (price: number | string) => {
@@ -96,7 +96,7 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                         "hasOfferCatalog": {
                             "@type": "OfferCatalog",
                             "name": "Industrial & Medical Equipment",
-                            "itemListElement": [
+                            "itemListElement":[
                                 { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Oil & Gas Exploration Equipment" } },
                                 { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Construction & Mining Machinery" } },
                                 { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Advanced Medical Systems" } }
@@ -108,12 +108,13 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
 
             <div className="min-h-screen bg-white text-slate-900 font-sans antialiased">
 
-                {/* 1. HERO SECTION (Optimized Wording) */}
+                {/* 1. HERO SECTION */}
                 <section className="relative h-[85vh] min-h-[650px] flex items-center overflow-hidden bg-slate-950">
                     <div className="absolute inset-0 z-0">
+                        {/* Swapped background for a tough heavy machinery/mining photo */}
                         <img
-                            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070&auto=format&fit=crop"
-                            alt="Industrial Heavy Machinery Operation"
+                            src="https://images.unsplash.com/photo-1541888087618-20aac2a2eeb8?q=80&w=2070&auto=format&fit=crop"
+                            alt="Industrial Heavy Machinery Tough Work"
                             className="w-full h-full object-cover opacity-30"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/80 to-transparent"></div>
@@ -146,15 +147,17 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
 
                 {/* 2. TRUST BAR */}
                 <div className="bg-slate-50 border-b border-slate-200">
-                    <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4">
+                    <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-6">
                         {[
-                            { icon: <Globe />, t: "Global Logistics", d: "Worldwide shipping" },
+                            { icon: <Globe />, t: "Global Logistic", d: "Worldwide shipping" },
                             { icon: <ShieldCheck />, t: "Certified Gear", d: "ISO & OSHA Compliant" },
-                            { icon: <Activity />, t: "Medical Grade", d: "Advanced diagnostics" },
-                            { icon: <HardHat />, t: "Heavy Duty", d: "Mining & Construction" }
+                            { icon: <Banknote />, t: "Financing", d: "Flexible terms" },
+                            { icon: <Wrench />, t: "Repair", d: "Expert technicians" },
+                            { icon: <Headset />, t: "After Sales Support", d: "24/7 Assistance" },
+                            { icon: <Hammer />, t: "Installation", d: "On-site setup" }
                         ].map((item, i) => (
-                            <div key={i} className="p-8 flex items-center gap-4 border-r border-slate-200 last:border-r-0 hover:bg-white transition-colors">
-                                <div className="text-orange-600">{React.cloneElement(item.icon as React.ReactElement, { className: "w-6 h-6" })}</div>
+                            <div key={i} className="p-6 flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left border-r border-slate-200 last:border-r-0 hover:bg-white transition-colors">
+                                <div className="text-orange-600 shrink-0">{React.cloneElement(item.icon as React.ReactElement, { className: "w-6 h-6" })}</div>
                                 <div>
                                     <h4 className="font-bold text-[10px] uppercase tracking-widest text-slate-900">{item.t}</h4>
                                     <p className="text-[10px] text-slate-500 font-medium mt-0.5">{item.d}</p>
@@ -198,7 +201,7 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
 
                 {/* 4. FEATURED PRODUCTS */}
                 {featuredProducts.length > 0 && (
-                    <section className="py-24 px-6 bg-white overflow-hidden">
+                    <section className="py-24 px-6 bg-white overflow-hidden border-b border-slate-100">
                         <div className="max-w-7xl mx-auto relative">
                             <div className="mb-16">
                                 <h2 className="text-[10px] font-black tracking-[0.3em] text-orange-600 uppercase mb-2">Inventory Spotlight</h2>
@@ -209,7 +212,8 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                                 {featuredProducts.map((product) => (
                                     <div key={product.id} className="w-full shrink-0">
                                         <div className="grid lg:grid-cols-2 gap-16 items-center">
-                                            <div className="relative aspect-square bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center p-12">
+                                            {/* Adjusted to match the visual size of category photos (h-[450px]) */}
+                                            <div className="relative h-[450px] w-full max-w-[450px] lg:max-w-none mx-auto bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center p-12">
                                                 <img
                                                     src={product.image}
                                                     alt={`${product.name} - ${product.brand_name} Industrial Equipment`}
@@ -268,8 +272,61 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                     </div>
                 </section>
 
-                {/* 6. REVIEWS */}
-                <section className="py-24 bg-slate-50">
+                {/* 6. COMPREHENSIVE SERVICES & SUPPORT */}
+                <section className="py-24 bg-white">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="mb-16 md:text-center">
+                            <h2 className="text-[10px] font-black tracking-[0.3em] text-orange-600 uppercase mb-2">Our Capabilities</h2>
+                            <p className="text-3xl md:text-4xl font-black text-slate-900 uppercase tracking-tighter">Comprehensive Support</p>
+                            <p className="text-slate-500 mt-4 max-w-2xl mx-auto font-medium">Beyond hardware supply, we provide robust infrastructural backing to ensure your operation runs seamlessly.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {/* We Provide */}
+                            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow">
+                                <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-6 text-orange-600">
+                                    <Globe className="w-7 h-7" />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-3">We Provide</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed">
+                                    End-to-end procurement and logistics of heavy-duty industrial and medical equipment tailored exactly to your global project scope.
+                                </p>
+                            </div>
+                            {/* Financing */}
+                            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow">
+                                <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-6 text-orange-600">
+                                    <Banknote className="w-7 h-7" />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-3">Financing</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed">
+                                    Flexible payment structures, leasing programs, and extended credit terms to help you acquire critical assets without halting cash flow.
+                                </p>
+                            </div>
+                            {/* Repairs */}
+                            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow">
+                                <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-6 text-orange-600">
+                                    <Wrench className="w-7 h-7" />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-3">Repairs</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed">
+                                    Access to certified field technicians offering major overhauls, preventative maintenance, and rapid emergency repair services.
+                                </p>
+                            </div>
+                            {/* After Sales Installation */}
+                            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow">
+                                <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-6 text-orange-600">
+                                    <Hammer className="w-7 h-7" />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-3">After Sales & Installation</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed">
+                                    Professional on-site assembly, integration, and round-the-clock technical support ensuring 100% operational readiness upon delivery.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 7. REVIEWS */}
+                <section className="py-24 bg-slate-50 border-t border-slate-100">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="text-center mb-16">
                             <Quote className="w-12 h-12 text-orange-200 mx-auto mb-4" />
@@ -292,8 +349,8 @@ const Home = ({ featuredProducts = [], collections = [], brands = [], reviews = 
                     </div>
                 </section>
 
-                {/* 7. NEWSLETTER */}
-                <section className="py-20 px-6">
+                {/* 8. NEWSLETTER */}
+                <section className="py-20 px-6 bg-white">
                     <div className="max-w-7xl mx-auto bg-orange-600 rounded-3xl p-8 md:p-16 relative overflow-hidden shadow-2xl">
                         <div className="absolute right-0 top-0 opacity-10 -rotate-12 translate-x-10 -translate-y-10">
                             <Mail className="w-64 h-64 text-white" />

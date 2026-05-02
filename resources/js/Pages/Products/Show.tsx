@@ -4,43 +4,47 @@ import AppLayout from '@/layouts/AppLayout';
 import { useCart } from '@/contexts/CartContext';
 import {
     Star, ShoppingCart, Check, Minus, Plus, ChevronRight,
-    Truck, ShieldCheck, Wrench, AlertCircle, ArrowLeft, ArrowRight
+    Truck, ShieldCheck, Wrench, AlertCircle, ArrowRight,
+    Info, ShieldAlert, Globe, Hammer
 } from 'lucide-react';
 
 interface Props {
     product: any;
-    relatedProducts: any[]; // Now using this
+    relatedProducts: any[];
 }
 
 const Show: React.FC<Props> = ({ product, relatedProducts = [] }) => {
-    const { addToCart } = useCart();
+    const { addToCart, updateQuantity, getItemQuantity } = useCart();
 
-    // Image logic: Use the 'gallery' array sent from backend
+    // Image logic
     const galleryImages = product?.gallery || [product?.image];
     const [selectedImage, setSelectedImage] = useState(galleryImages[0]);
 
-    // Update selected image if product changes (e.g., clicking a related product)
+    // Current quantity of THIS product in the cart
+    const currentCartQty = getItemQuantity(product?.id);
+
+    // Local state for the "Add to Fleet" action
+    const [localQty, setLocalQty] = useState(1);
+    const [justAdded, setJustAdded] = useState(false);
+
     useEffect(() => {
         if (galleryImages.length > 0) {
             setSelectedImage(galleryImages[0]);
         }
     }, [product?.id]);
 
-    const categoryName = product?.category?.name || 'Shop';
-    const categorySlug = product?.category?.slug || '';
-    const brandName = product?.brand?.name || '';
+    const brandName = product?.brand?.name || 'Industrial Series';
     const featuresList = product?.features || [];
     const inStock = product?.stock_quantity > 0;
     const maxStock = product?.stock_quantity || 0;
 
-    const [quantity, setQuantity] = useState(1);
-    const [added, setAdded] = useState(false);
-
-    const handleAddToCart = () => {
+    const handleInitialAdd = () => {
         if (!product || !inStock) return;
-        addToCart(product, quantity);
-        setAdded(true);
-        setTimeout(() => setAdded(false), 2000);
+        const success = addToCart(product, localQty);
+        if (success) {
+            setJustAdded(true);
+            setTimeout(() => setJustAdded(false), 2000);
+        }
     };
 
     if (!product) {
@@ -57,7 +61,7 @@ const Show: React.FC<Props> = ({ product, relatedProducts = [] }) => {
 
     return (
         <AppLayout>
-            <Head title={`${product.name} | AUGIMEN`} />
+            <Head title={`${product.name} | AXELMASON`} />
 
             <div className="bg-white min-h-screen text-slate-900 font-sans">
                 <div className="max-w-7xl mx-auto px-6 py-8">
@@ -93,7 +97,7 @@ const Show: React.FC<Props> = ({ product, relatedProducts = [] }) => {
                                                 selectedImage === img ? 'border-orange-600 bg-white' : 'border-transparent hover:border-slate-200'
                                             }`}
                                         >
-                                            <img src={img} className="w-full h-full object-contain" />
+                                            <img src={img} className="w-full h-full object-contain" alt="Gallery" />
                                         </button>
                                     ))}
                                 </div>
@@ -103,9 +107,9 @@ const Show: React.FC<Props> = ({ product, relatedProducts = [] }) => {
                         {/* RIGHT: CONTENT */}
                         <div className="flex flex-col">
                             <span className="text-orange-600 font-black text-[10px] uppercase tracking-[0.3em] mb-4">
-                                {brandName || "Industrial Series"}
+                                {brandName}
                             </span>
-                            <h1 className="text-4xl md:text-5xl font-black text-slate-950 uppercase tracking-tighter leading-none mb-6">
+                            <h1 className="text-4xl md:text-5xl font-black text-slate-950 uppercase tracking-tighter leading-tight mb-6">
                                 {product.name}
                             </h1>
 
@@ -127,50 +131,90 @@ const Show: React.FC<Props> = ({ product, relatedProducts = [] }) => {
                                 )}
                             </div>
 
-                            <p className="text-slate-600 text-lg mb-10 leading-relaxed font-medium">
-                                {product.description || "High-performance hardware engineered for precision and longevity in demanding environments."}
-                            </p>
-
-                            {/* SPECS */}
-                            {featuresList.length > 0 && (
-                                <div className="mb-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {featuresList.map((feature: string, idx: number) => (
-                                        <div key={idx} className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-slate-700">
-                                            <Check className="w-4 h-4 text-orange-600" /> {feature}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            {/* SMALL PRODUCT DETAILS SECTION */}
+                            <div className="mb-10 p-6 bg-slate-50 rounded-xl border border-slate-100">
+                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-3 flex items-center gap-2">
+                                    <Info className="w-4 h-4 text-orange-600" /> Equipment Overview
+                                </h3>
+                                <p className="text-slate-600 text-sm leading-relaxed font-medium">
+                                    {product.description || "The industry benchmark for performance and reliability. Engineered for precision in the most demanding global industrial environments."}
+                                </p>
+                            </div>
 
                             {/* BUYING BOX */}
-                            <div className="p-8 bg-slate-950 rounded-2xl text-white">
+                            <div className="p-8 bg-slate-950 rounded-2xl text-white shadow-2xl">
                                 <div className="flex items-center justify-between mb-6">
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">Deployment Status</span>
                                     <span className={`text-[10px] font-black uppercase px-3 py-1 rounded ${inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
-                                        {inStock ? 'In Stock' : 'Unavailable'}
+                                        {inStock ? 'In Stock / Ready to Ship' : 'Out of Stock'}
                                     </span>
                                 </div>
 
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <div className="flex items-center justify-between bg-white/10 rounded-lg px-6 py-4 sm:w-40">
-                                        <button onClick={() => setQuantity(q => Math.max(1, q-1))} className="text-white/50 hover:text-white"><Minus className="w-4 h-4" /></button>
-                                        <span className="font-black">{quantity}</span>
-                                        <button onClick={() => setQuantity(q => Math.min(maxStock, q+1))} className="text-white/50 hover:text-white"><Plus className="w-4 h-4" /></button>
+                                {/* Dynamic Cart Logic: If already in cart, show quantity toggle. If not, show Add button. */}
+                                {currentCartQty > 0 ? (
+                                    <div className="space-y-4">
+                                        <p className="text-xs font-bold text-orange-500 uppercase tracking-widest">In your active fleet:</p>
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center justify-between bg-white/10 rounded-lg px-6 py-4 flex-1">
+                                                <button onClick={() => updateQuantity(product.id, currentCartQty - 1)} className="text-white hover:text-orange-500 transition-colors"><Minus className="w-5 h-5" /></button>
+                                                <span className="font-black text-xl">{currentCartQty}</span>
+                                                <button onClick={() => updateQuantity(product.id, currentCartQty + 1)} className="text-white hover:text-orange-500 transition-colors"><Plus className="w-5 h-5" /></button>
+                                            </div>
+                                            <div className="bg-emerald-600 p-4 rounded-lg">
+                                                <Check className="w-6 h-6 text-white" />
+                                            </div>
+                                        </div>
                                     </div>
+                                ) : (
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <div className="flex items-center justify-between bg-white/10 rounded-lg px-6 py-4 sm:w-40">
+                                            <button onClick={() => setLocalQty(q => Math.max(1, q-1))} className="text-white/50 hover:text-white"><Minus className="w-4 h-4" /></button>
+                                            <span className="font-black">{localQty}</span>
+                                            <button onClick={() => setLocalQty(q => Math.min(maxStock, q+1))} className="text-white/50 hover:text-white"><Plus className="w-4 h-4" /></button>
+                                        </div>
 
-                                    <button
-                                        onClick={handleAddToCart}
-                                        disabled={!inStock || added}
-                                        className={`flex-1 py-4 px-8 rounded-lg font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all ${
-                                            added ? 'bg-emerald-600 text-white' : 'bg-orange-600 hover:bg-orange-500 text-white'
-                                        } disabled:opacity-50 disabled:cursor-not-allowed`}
-                                    >
-                                        {added ? <><Check className="w-4 h-4" /> Added</> : <><ShoppingCart className="w-4 h-4" /> Add to Fleet</>}
-                                    </button>
-                                </div>
+                                        <button
+                                            onClick={handleInitialAdd}
+                                            disabled={!inStock || justAdded}
+                                            className="flex-1 py-4 px-8 rounded-lg font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all bg-orange-600 hover:bg-orange-500 text-white disabled:opacity-50 shadow-lg shadow-orange-900/20"
+                                        >
+                                            <ShoppingCart className="w-4 h-4" /> Add to Fleet
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* CORE SERVICES ICONS */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+                                {[
+                                    { icon: <Globe />, label: "Global Delivery" },
+                                    { icon: <ShieldCheck />, label: "Certified Gear" },
+                                    { icon: <Wrench />, label: "Support" },
+                                    { icon: <Hammer />, label: "Installation" }
+                                ].map((service, i) => (
+                                    <div key={i} className="flex flex-col items-center p-4 border border-slate-100 rounded-xl bg-slate-50/50">
+                                        <div className="text-orange-600 mb-2">{React.cloneElement(service.icon as React.ReactElement, { className: "w-5 h-5" })}</div>
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{service.label}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
+
+                    {/* TECHNICAL SPECS */}
+                    {featuresList.length > 0 && (
+                        <div className="mt-24">
+                            <h2 className="text-2xl font-black uppercase tracking-tighter text-slate-900 mb-8 pb-4 border-b border-slate-100">Technical Specifications</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-12">
+                                {featuresList.map((feature: string, idx: number) => (
+                                    <div key={idx} className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-slate-700">
+                                        <div className="w-2 h-2 rounded-full bg-orange-600"></div>
+                                        {feature}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {/* RELATED PRODUCTS */}
                     {relatedProducts.length > 0 && (
@@ -181,7 +225,7 @@ const Show: React.FC<Props> = ({ product, relatedProducts = [] }) => {
                                     <p className="text-3xl font-black text-slate-900 uppercase tracking-tighter">Related Equipment</p>
                                 </div>
                                 <Link href="/products" className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:text-orange-600">
-                                    View All <ArrowRight className="w-3 h-3" />
+                                    View All Inventory <ArrowRight className="w-3 h-3" />
                                 </Link>
                             </div>
 

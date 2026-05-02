@@ -13,39 +13,50 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Checkout');
+        return Inertia::render('Checkout', [
+            'btcRate' => 0.000015, // Could fetch from API in production
+        ]);
     }
 
     public function store(Request $request)
     {
-        // 1. Validate Form Data
         $validated = $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|max:255',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'postal_code' => 'required|string',
+            'address' => 'required|string|max:500',
+            'city' => 'required|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'postal_code' => 'required|string|max:20',
+            'shipping_method' => 'required|in:standard,express',
+            'payment_method' => 'required|in:bitcoin',
             'items' => 'required|array|min:1',
+            'items.*.id' => 'required|integer|exists:products,id',
+            'items.*.cartQuantity' => 'required|integer|min:1',
+            'items.*.name' => 'required|string',
+            'items.*.price' => 'required|numeric|min:0',
         ]);
 
-        // 2. Start Database Transaction
-        // This ensures that if the payment "fails" or an error occurs, no data is saved.
-        return DB::transaction(function () use ($request, $validated) {
-
+        return DB::transaction(function () use ($validated) {
             $subtotal = 0;
             $itemsToProcess = [];
 
-            // 3. Verify Items and Calculate Subtotal from DB (Security check)
-            foreach ($request->items as $cartItem) {
+            // Verify products & calculate subtotal server-side
+            foreach ($validated['items'] as $cartItem) {
                 $product = Product::lockForUpdate()->find($cartItem['id']);
 
-                if (!$product || $product->stock_quantity < $cartItem['cartQuantity']) {
-                    return back()->withErrors(['items' => "Product {$product->name} is out of stock."]);
+                if (!$product) {
+                    return back()->withErrors(['items' => "One or more products no longer exist."]);
                 }
 
-                $subtotal += $product->price * $cartItem['cartQuantity'];
+                if ($product->stock_quantity < $cartItem['cartQuantity']) {
+                    return back()->withErrors([
+                        'items' => "{$product->name} is out of stock. Only {$product->stock_quantity} remaining."
+                    ]);
+                }
 
+                // Use DB price, not client-sent price (security)
+                $subtotal += $product->price * $cartItem['cartQuantity'];
                 $itemsToProcess[] = [
                     'product' => $product,
                     'quantity' => $cartItem['cartQuantity'],
@@ -53,19 +64,16 @@ class CheckoutController extends Controller
                 ];
             }
 
-            // 4. Simulate Online Payment Processing
-            // We "sleep" the server for 2 seconds to simulate talking to a bank
-            sleep(2);
-
-            // Simulate a 5% chance of payment failure
-            if (rand(1, 100) <= 5) {
-                return back()->withErrors(['payment' => 'The simulated payment was declined by the bank. Please try again.']);
-            }
-
-            // 5. Create the Order
-            $shipping = 15.00;
+            // Calculate totals
+            $shipping = $validated['shipping_method'] === 'express' ? 35.00 : 15.00;
             $tax = $subtotal * 0.08;
             $total = $subtotal + $shipping + $tax;
+
+            // Simulate BTC payment processing (replace with real gateway in production)
+            // sleep(1);
+            // if (rand(1, 100) <= 5) {
+            //     return back()->withErrors(['payment' => 'Payment simulation declined. Please try again.']);
+            // }
 
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
@@ -74,15 +82,18 @@ class CheckoutController extends Controller
                 'last_name' => $validated['last_name'],
                 'address' => $validated['address'],
                 'city' => $validated['city'],
+                'state' => $validated['state'] ?? null,
                 'postal_code' => $validated['postal_code'],
+                'shipping_method' => $validated['shipping_method'],
+                'payment_method' => $validated['payment_method'],
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shipping,
                 'tax' => $tax,
                 'total' => $total,
-                'status' => 'processing', // Payment "cleared", so we move to processing
+                'status' => 'processing',
             ]);
 
-            // 6. Create Order Items & Decrement Stock
+            // Create order items & update stock
             foreach ($itemsToProcess as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
@@ -90,22 +101,22 @@ class CheckoutController extends Controller
                     'quantity' => $item['quantity'],
                     'price_at_purchase' => $item['price'],
                 ]);
-
-                // Update stock in DB
                 $item['product']->decrement('stock_quantity', $item['quantity']);
             }
 
-            // 7. Redirect to Success Page
-            return redirect()->route('checkout.success', $order->order_number);
+            // Return success data via Inertia props (no redirect needed)
+            return Inertia::render('Checkout', [
+                'successOrder' => [
+                    'order_number' => $order->order_number,
+                    'total' => $order->total,
+                    'items' => $order->items->map(fn($i) => [
+                        'name' => $i->product?->name ?? 'Unknown',
+                        'quantity' => $i->quantity,
+                        'price' => $i->price_at_purchase,
+                    ]),
+                ],
+                'btcRate' => 0.000015,
+            ]);
         });
-    }
-
-    public function success($order_number)
-    {
-        $order = Order::where('order_number', $order_number)->firstOrFail();
-
-        return Inertia::render('OrderSuccess', [
-            'order' => $order
-        ]);
     }
 }

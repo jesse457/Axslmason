@@ -16,7 +16,14 @@ import {
     User,
     Zap,
     ChevronRight,
-    ShieldCheck, BadgeCheck, Lock
+    ShieldCheck,
+    BadgeCheck,
+    Lock,
+    Globe,
+    Banknote,
+    Wrench,
+    Headset,
+    Hammer
 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { Toaster } from 'react-hot-toast';
@@ -32,6 +39,73 @@ interface PageProps {
     [key: string]: any;
 }
 
+// ─────────────────────────────────────────────────────────────
+// ACCOUNT MODAL COMPONENT (Exactly as requested)
+// ─────────────────────────────────────────────────────────────
+const AccountModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
+    const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+            <div
+                className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Close Button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-3 right-3 p-1.5 text-slate-400 hover:text-slate-600 transition"
+                >
+                    <X className="h-4 w-4" />
+                </button>
+
+                {/* Tabs */}
+                <div className="flex border-b border-slate-200">
+                    <button
+                        onClick={() => setActiveTab('login')}
+                        className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition ${
+                            activeTab === 'login'
+                                ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50/50'
+                                : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Login
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('register')}
+                        className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition ${
+                            activeTab === 'register'
+                                ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50/50'
+                                : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Create Account
+                    </button>
+                </div>
+
+                {/* Content - Exactly as requested */}
+                <div className="p-8 text-center">
+                    <Lock className="mx-auto h-8 w-8 text-slate-300 mb-4" />
+                    <p className="text-sm font-bold text-slate-600 uppercase tracking-widest">
+                        Please contact us to proceed.
+                    </p>
+                    <a
+                        href="mailto:support@axelmason.com"
+                        className="mt-4 inline-block text-[10px] font-black text-orange-600 uppercase tracking-widest hover:underline"
+                    >
+                        support@axelmason.com
+                    </a>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────────────────────
+// MAIN APP LAYOUT
+// ─────────────────────────────────────────────────────────────
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     const { url, props } = usePage<PageProps>();
     const categories = props.categories || [];
@@ -40,6 +114,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isAccountModalOpen, setIsAccountModalOpen] = useState(false); // ✅ Added
 
     // Global Search States
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -47,8 +122,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
 
-    const { cartItems, cartCount, cartTotal, removeFromCart, updateQuantity } =
-        useCart();
+    const { cartItems, cartCount, cartTotal, removeFromCart, updateQuantity } = useCart();
 
     // Helper to determine active links
     const isActive = (path: string) => url === path;
@@ -105,12 +179,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
     // --- ACCESSIBILITY / SCROLL LOCK ---
     useEffect(() => {
-        if (isCartDrawerOpen || isMobileMenuOpen || isSearchOpen) {
+        if (isCartDrawerOpen || isMobileMenuOpen || isSearchOpen || isAccountModalOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
         }
-    }, [isCartDrawerOpen, isMobileMenuOpen, isSearchOpen]);
+    }, [isCartDrawerOpen, isMobileMenuOpen, isSearchOpen, isAccountModalOpen]);
 
     return (
         <div className="flex min-h-screen flex-col bg-white font-sans text-slate-900 selection:bg-orange-500 selection:text-white">
@@ -118,7 +192,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 position="top-center"
                 toastOptions={{
                     style: {
-                        background: '#0f172a', // slate-950
+                        background: '#0f172a',
                         color: '#fff',
                         borderRadius: '0.75rem',
                         padding: '1rem',
@@ -175,10 +249,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     >
                                         <div className="flex aspect-square items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 p-6 transition-all group-hover:border-orange-200 group-hover:shadow-xl">
                                             <img
-                                                src={
-                                                    item.main_image ||
-                                                    item.image
-                                                }
+                                                src={item.main_image || item.image}
                                                 alt={item.name}
                                                 className="max-h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                                             />
@@ -204,9 +275,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                         <Link
                                             key={cat.id}
                                             href={`/products?category=${cat.slug}`}
-                                            onClick={() =>
-                                                setIsSearchOpen(false)
-                                            }
+                                            onClick={() => setIsSearchOpen(false)}
                                             className="rounded-full border border-slate-100 bg-slate-50 px-6 py-3 text-[10px] font-black tracking-widest uppercase transition-all hover:border-orange-500 hover:bg-orange-500 hover:text-white"
                                         >
                                             {cat.name}
@@ -219,116 +288,125 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </div>
             </div>
 
-           {/* --- NAVIGATION --- */}
-<nav
-    className={`fixed top-0 z-40 w-full border-b border-slate-100 bg-white transition-all duration-300 ${isScrolled ? 'py-3 shadow-lg shadow-slate-100/50' : 'py-5'}`}
->
-    <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 md:px-10">
-        <div className="flex items-center gap-10">
-            {/* Logo Wrapper */}
-            <Link href="/" className="flex items-center gap-2">
-                <div className="flex h-15 w-32 items-center justify-center overflow-hidden">
-                    <img
-                        src="/assets/axel.png"
-                        alt="AUGIMEN Logo"
-                        /* mix-blend-multiply removes white backgrounds if the PNG is not transparent */
-                        className="h-full w-auto scale-[2.5] transform object-contain mix-blend-multiply"
-                    />
+            {/* --- NAVIGATION --- */}
+            <nav
+                className={`fixed top-0 z-40 w-full border-b border-slate-100 bg-white transition-all duration-300 ${isScrolled ? 'py-3 shadow-lg shadow-slate-100/50' : 'py-5'}`}
+            >
+                <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 md:px-10">
+                    <div className="flex items-center gap-10">
+                        {/* Logo Wrapper */}
+                        <Link href="/" className="flex items-center gap-2">
+                            <div className="flex h-15 w-32 items-center justify-center overflow-hidden">
+                                <img
+                                    src="/assets/axel.png"
+                                    alt="AXELMASON Logo"
+                                    className="h-full w-auto scale-[2.5] transform object-contain mix-blend-multiply"
+                                />
+                            </div>
+                        </Link>
+
+                        {/* Desktop Links */}
+                        <div className="hidden items-center gap-6 text-[10px] font-black tracking-widest text-slate-400 uppercase lg:flex">
+                            <Link
+                                href="/products"
+                                className={`transition-colors hover:text-orange-600 ${isPrefixActive('/products') ? 'text-slate-900' : ''}`}
+                            >
+                                Inventory
+                            </Link>
+                            <Link
+                                href="/deals"
+                                className={`transition-colors hover:text-orange-600 ${isActive('/deals') ? 'text-slate-900' : ''}`}
+                            >
+                                <span className="flex items-center gap-1 text-orange-600">
+                                    <Zap className="h-3 w-3 fill-orange-600" /> Deals
+                                </span>
+                            </Link>
+                            <Link
+                                href="/about"
+                                className={`transition-colors hover:text-orange-600 ${isActive('/about') ? 'text-slate-900' : ''}`}
+                            >
+                                About
+                            </Link>
+                            <Link
+                                href="/blog"
+                                className={`transition-colors hover:text-orange-600 ${isActive('/blog') ? 'text-slate-900' : ''}`}
+                            >
+                                Bulletins
+                            </Link>
+                            <Link
+                                href="/contact"
+                                className={`transition-colors hover:text-orange-600 ${isActive('/contact') ? 'text-slate-900' : ''}`}
+                            >
+                                Contact
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                        {/* Icons */}
+                        <div className="flex items-center gap-5 text-slate-900 md:border-l md:border-slate-200 md:pl-6">
+                            <button
+                                onClick={() => setIsSearchOpen(true)}
+                                className="transition-all hover:text-orange-600"
+                            >
+                                <Search className="h-5 w-5" />
+                            </button>
+
+                            {/* ✅ ACCOUNT BUTTON - Opens Modal */}
+                            <button
+                                onClick={() => setIsAccountModalOpen(true)}
+                                className="hidden transition-all hover:text-orange-600 md:flex items-center gap-1"
+                            >
+                                <User className="h-5 w-5" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Account</span>
+                            </button>
+
+                            <button
+                                onClick={() => setIsCartDrawerOpen(true)}
+                                className="group relative transition-all hover:text-orange-600"
+                            >
+                                <ShoppingCart className="h-5 w-5" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-orange-600 text-[9px] font-black text-white shadow-sm">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Mobile Hamburger */}
+                            <button
+                                className="-mr-2 p-2 text-slate-900 lg:hidden"
+                                onClick={() => setIsMobileMenuOpen(true)}
+                            >
+                                <Menu className="h-6 w-6" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </Link>
+            </nav>
 
-            {/* Desktop Links - Updated with About, Blog, Contact */}
-            <div className="hidden items-center gap-6 text-[10px] font-black tracking-widest text-slate-400 uppercase lg:flex">
-               
-                <Link
-                    href="/products"
-                    className={`transition-colors hover:text-orange-600 ${isPrefixActive('/products') ? 'text-slate-900' : ''}`}
-                >
-                    Inventory
-                </Link>
-                <Link
-                    href="/deals"
-                    className={`transition-colors hover:text-orange-600 ${isActive('/deals') ? 'text-slate-900' : ''}`}
-                >
-                    <span className="flex items-center gap-1 text-orange-600">
-                        <Zap className="h-3 w-3 fill-orange-600" /> Deals
-                    </span>
-                </Link>
-                <Link
-                    href="/about"
-                    className={`transition-colors hover:text-orange-600 ${isActive('/about') ? 'text-slate-900' : ''}`}
-                >
-                    About
-                </Link>
-                <Link
-                    href="/blog"
-                    className={`transition-colors hover:text-orange-600 ${isActive('/blog') ? 'text-slate-900' : ''}`}
-                >
-                    Bulletins
-                </Link>
-                <Link
-                    href="/contact"
-                    className={`transition-colors hover:text-orange-600 ${isActive('/contact') ? 'text-slate-900' : ''}`}
-                >
-                    Contact
-                </Link>
-            </div>
-        </div>
-
-        <div className="flex items-center gap-6">
-
-            {/* Icons */}
-            <div className="flex items-center gap-5 text-slate-900 md:border-l md:border-slate-200 md:pl-6">
-                <button
-                    onClick={() => setIsSearchOpen(true)}
-                    className="transition-all hover:text-orange-600"
-                >
-                    <Search className="h-5 w-5" />
-                </button>
-                <Link
-                    href="/account"
-                    className="hidden transition-all hover:text-orange-600 md:block"
-                >
-                    <User className="h-5 w-5" />
-                </Link>
-                <button
-                    onClick={() => setIsCartDrawerOpen(true)}
-                    className="group relative transition-all hover:text-orange-600"
-                >
-                    <ShoppingCart className="h-5 w-5" />
-                    {cartCount > 0 && (
-                        <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-orange-600 text-[9px] font-black text-white shadow-sm">
-                            {cartCount}
-                        </span>
-                    )}
-                </button>
-
-                {/* Mobile Hamburger */}
-                <button
-                    className="-mr-2 p-2 text-slate-900 lg:hidden"
-                    onClick={() => setIsMobileMenuOpen(true)}
-                >
-                    <Menu className="h-6 w-6" />
-                </button>
-            </div>
-        </div>
-    </div>
-</nav>
+            {/* --- ACCOUNT MODAL --- */}
+            <AccountModal
+                isOpen={isAccountModalOpen}
+                onClose={() => setIsAccountModalOpen(false)}
+            />
 
             {/* --- MOBILE MENU OVERLAY --- */}
             <div
                 className={`fixed inset-0 z-50 bg-slate-950 transition-transform duration-500 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col lg:hidden`}
             >
                 <div className="flex items-center justify-between border-b border-white/10 p-6">
-                    <Link
-                        href="/"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-2 text-3xl font-black tracking-tighter text-white"
-                    >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-600 text-2xl text-white">
-                            A
+                    <Link href="/" className="flex items-center gap-2">
+                        <div className="flex h-15 w-32 items-center justify-center overflow-hidden">
+                            <img
+                                src="/assets/axel.png"
+                                alt="AXELMASON Industrial Logo"
+                                className="h-full w-auto scale-[2.5] transform object-contain"
+                                style={{
+                                    filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(102%)',
+                                }}
+                            />
                         </div>
-                        UGIMEN
                     </Link>
                     <button
                         onClick={() => setIsMobileMenuOpen(false)}
@@ -339,44 +417,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </div>
                 <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-8">
                     <div className="flex flex-col gap-6 text-2xl font-black tracking-tighter text-white uppercase">
-                        <Link
-                            href="/"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Home
+                        <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                        <Link href="/products" onClick={() => setIsMobileMenuOpen(false)}>Full Inventory</Link>
+                        <Link href="/deals" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 text-orange-500">
+                            <Zap className="h-6 w-6 fill-orange-500" /> Spotlight Deals
                         </Link>
-                        <Link
-                            href="/products"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Full Inventory
-                        </Link>
-                        <Link
-                            href="/deals"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex items-center gap-2 text-orange-500"
-                        >
-                            <Zap className="h-6 w-6 fill-orange-500" />{' '}
-                            Spotlight Deals
-                        </Link>
-                        <Link
-                            href="/blog"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Technical Bulletins
-                        </Link>
-                        <Link
-                            href="/about"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            About Us
-                        </Link>
-                        <Link
-                            href="/contact"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Contact Sales
-                        </Link>
+                        <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)}>Technical Bulletins</Link>
+                        <Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                        <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>Contact Sales & Support</Link>
                     </div>
                     <div className="mt-auto border-t border-white/10 pt-8">
                         <Link
@@ -400,8 +448,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
                 <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-8 py-8">
                     <h2 className="flex items-center gap-3 text-2xl font-black tracking-tighter uppercase">
-                        <ShoppingCart className="h-6 w-6 text-orange-600" />{' '}
-                        Active Order
+                        <ShoppingCart className="h-6 w-6 text-orange-600" /> Active Order
                     </h2>
                     <button
                         onClick={() => setIsCartDrawerOpen(false)}
@@ -449,9 +496,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                                 {item.name}
                                             </h4>
                                             <button
-                                                onClick={() =>
-                                                    removeFromCart(item.id)
-                                                }
+                                                onClick={() => removeFromCart(item.id)}
                                                 className="shrink-0 text-slate-300 transition-colors hover:text-red-500"
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -464,13 +509,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                         <div className="flex items-center gap-4">
                                             <div className="flex items-center rounded-lg border border-slate-200 bg-white">
                                                 <button
-                                                    onClick={() =>
-                                                        updateQuantity(
-                                                            item.id,
-                                                            item.cartQuantity -
-                                                                1,
-                                                        )
-                                                    }
+                                                    onClick={() => updateQuantity(item.id, item.cartQuantity - 1)}
                                                     className="p-2 text-slate-400 hover:text-slate-900"
                                                 >
                                                     <Minus className="h-3 w-3" />
@@ -479,13 +518,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                                     {item.cartQuantity}
                                                 </span>
                                                 <button
-                                                    onClick={() =>
-                                                        updateQuantity(
-                                                            item.id,
-                                                            item.cartQuantity +
-                                                                1,
-                                                        )
-                                                    }
+                                                    onClick={() => updateQuantity(item.id, item.cartQuantity + 1)}
                                                     className="p-2 text-slate-400 hover:text-slate-900"
                                                 >
                                                     <Plus className="h-3 w-3" />
@@ -514,8 +547,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             onClick={() => setIsCartDrawerOpen(false)}
                             className="flex w-full items-center justify-center gap-4 rounded-2xl bg-slate-950 py-6 text-[11px] font-black tracking-[0.3em] text-white uppercase shadow-xl shadow-slate-200 transition-all hover:bg-orange-600"
                         >
-                            Proceed to Checkout{' '}
-                            <ArrowRight className="h-5 w-5" />
+                            Proceed to Checkout <ArrowRight className="h-5 w-5" />
                         </Link>
                         <p className="mt-4 text-center text-[9px] font-black tracking-widest text-slate-400 uppercase">
                             Shipping and taxes calculated at checkout.
@@ -525,200 +557,196 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
 
             {/* --- MAIN CONTENT --- */}
-            {/* Added solid padding-top to account for the static fixed navbar */}
             <main className="flex-grow pt-[85px] md:pt-[100px]">
                 {children}
             </main>
 
-          {/* --- FOOTER --- */}
-<footer className="bg-slate-950 px-8 pt-24 pb-12 text-white">
-    <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-4">
-
-        {/* Brand Column */}
-        <div className="space-y-6">
-            <div className="flex h-10 w-35 items-center justify-center overflow-hidden">
-                <img
-                    src="/assets/axel.png"
-                    alt="AXELMANSON Industrial Logo"
-                    className="h-full w-auto object-contain"
-                    style={{
-                        filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(102%)',
-                    }}
-                />
-            </div>
-            <p className="max-w-xs text-xs leading-relaxed font-bold tracking-tight text-slate-400 uppercase">
-                Global supplier of certified heavy-duty industrial and medical-grade hardware. Engineering reliability since 1998.
-            </p>
-
-            {/* Trust Badges */}
-            <div className="flex flex-wrap gap-3 pt-2">
-                <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                    <ShieldCheck className="h-3.5 w-3.5 text-orange-600" />
-                    ISO 9001
+            {/* --- FOOTER --- */}
+            <footer className="relative bg-slate-950 px-8 pt-24 pb-12 text-white overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-10">
+                    <img
+                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop"
+                        alt="Tough Work Operations Background"
+                        className="w-full h-full object-cover grayscale"
+                    />
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                    <BadgeCheck className="h-3.5 w-3.5 text-orange-600" />
-                    FDA Registered
+
+                <div className="relative z-10 mx-auto grid max-w-[1600px] grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
+                    {/* Brand Column */}
+                    <div className="space-y-6">
+                        <div className="flex h-10 w-35 scale-[4.0] transform object-contain items-center justify-center overflow-hidden">
+                            <img
+                                src="/assets/axel.png"
+                                alt="AXELMASON Industrial Logo"
+                                className="h-full w-auto object-contain"
+                                style={{
+                                    filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(102%)',
+                                }}
+                            />
+                        </div>
+                        <p className="max-w-xs text-xs leading-relaxed font-bold tracking-tight text-slate-400 uppercase">
+                            Global supplier of certified heavy-duty industrial and medical-grade hardware. Engineering reliability since 1998.
+                        </p>
+
+                        <div className="flex flex-col gap-2.5 pt-2">
+                            {[
+                                { icon: <Globe />, t: "Global Logistic" },
+                                { icon: <ShieldCheck />, t: "Certified Gear" },
+                                { icon: <Banknote />, t: "Financing" },
+                                { icon: <Wrench />, t: "Repair" },
+                                { icon: <Headset />, t: "After Sales Support" },
+                                { icon: <Hammer />, t: "Installation" }
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-wider">
+                                    {React.cloneElement(item.icon as React.ReactElement, { className: "h-4 w-4 text-orange-600" })}
+                                    {item.t}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Products Column */}
+                    <div>
+                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                            Shop
+                        </h4>
+                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                            <li>
+                                <Link href={route('products.index')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> All Products
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('deals')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Spotlight Deals
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('quote')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Request Bulk Quote
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('blog')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Technical Bulletins
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Capabilities Column */}
+                    <div>
+                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                            Capabilities
+                        </h4>
+                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                            <li>
+                                <Link href={route('about')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Global Logistics
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Equipment Financing
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Maintenance & Repair
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> After Sales Support
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Professional Installation
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Support & Legal Column */}
+                    <div>
+                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                            Support & Legal
+                        </h4>
+                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                            <li>
+                                <Link href={route('about')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> About AXELMASON
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Technical Support
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('shipping-policy')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Shipping Policy
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('return-policy')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Returns & Refunds
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('privacy')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Privacy Policy
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('terms')} className="flex items-center gap-2 transition-colors hover:text-white">
+                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Terms & Conditions
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Newsletter Column */}
+                    <div>
+                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                            Industrial Updates
+                        </h4>
+                        <p className="mb-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                            Receive supply chain alerts & new stock notifications.
+                        </p>
+                        <form className="flex gap-2 rounded-2xl border border-white/10 bg-white/5 p-2" onSubmit={(e) => { e.preventDefault(); }}>
+                            <input
+                                type="email"
+                                placeholder="work@company.com"
+                                className="flex-1 border-none bg-transparent px-4 text-xs font-bold text-white placeholder:text-slate-500 focus:ring-0"
+                                aria-label="Work email address"
+                            />
+                            <button
+                                type="submit"
+                                className="rounded-xl bg-orange-600 p-4 transition-all hover:bg-orange-500"
+                                aria-label="Subscribe to newsletter"
+                            >
+                                <Mail className="h-5 w-5 text-white" />
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                    <Lock className="h-3.5 w-3.5 text-orange-600" />
-                    Secure Checkout
+
+                {/* Bottom Bar */}
+                <div className="relative z-10 mx-auto mt-20 flex max-w-[1600px] flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-[10px] font-black tracking-widest text-slate-500 uppercase md:flex-row">
+                    <p>© {new Date().getFullYear()} AXELMASON INDUSTRIAL. ALL RIGHTS RESERVED.</p>
+                    <div className="flex items-center gap-4">
+                        <span className="flex items-center gap-1.5">
+                            <ShieldCheck className="h-4 w-4 text-orange-600" /> ISO 9001 COMPLIANT
+                        </span>
+                        <span className="hidden md:inline text-slate-700">|</span>
+                        <span className="flex items-center gap-1.5">
+                            <BadgeCheck className="h-4 w-4 text-orange-600" /> FDA REGISTERED
+                        </span>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        {/* Products Column */}
-        <div>
-            <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                Shop
-            </h4>
-            <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                <li>
-                    <Link
-                        href={route('products.index')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        All Products
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('deals')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Spotlight Deals
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('quote')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Request Bulk Quote
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('blog')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Technical Bulletins
-                    </Link>
-                </li>
-            </ul>
-        </div>
-
-        {/* Support & Legal Column */}
-        <div>
-            <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                Support & Legal
-            </h4>
-            <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                <li>
-                    <Link
-                        href={route('about')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        About AXELMANSON
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('contact')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Technical Support
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('shipping-policy')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Shipping Policy
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('return-policy')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Returns & Refunds
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('privacy')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Privacy Policy
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href={route('terms')}
-                        className="flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                        <ChevronRight className="h-3 w-3 text-orange-600" />
-                        Terms & Conditions
-                    </Link>
-                </li>
-            </ul>
-        </div>
-
-        {/* Newsletter Column */}
-        <div>
-            <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                Industrial Updates
-            </h4>
-            <p className="mb-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                Receive supply chain alerts & new stock notifications.
-            </p>
-            <form className="flex gap-2 rounded-2xl border border-white/10 bg-white/5 p-2" onSubmit={(e) => { e.preventDefault(); }}>
-                <input
-                    type="email"
-                    placeholder="work@company.com"
-                    className="flex-1 border-none bg-transparent px-4 text-xs font-bold text-white placeholder:text-slate-500 focus:ring-0"
-                    aria-label="Work email address"
-                />
-                <button
-                    type="submit"
-                    className="rounded-xl bg-orange-600 p-4 transition-all hover:bg-orange-500"
-                    aria-label="Subscribe to newsletter"
-                >
-                    <Mail className="h-5 w-5 text-white" />
-                </button>
-            </form>
-        </div>
-    </div>
-
-    {/* Bottom Bar */}
-    <div className="mx-auto mt-20 flex max-w-[1600px] flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-[10px] font-black tracking-widest text-slate-600 uppercase md:flex-row">
-        <p>
-            © {new Date().getFullYear()} AXELMANSON INDUSTRIAL. ALL RIGHTS RESERVED.
-        </p>
-        <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-orange-600" />
-                ISO 9001 COMPLIANT
-            </span>
-            <span className="hidden md:inline text-slate-700">|</span>
-            <span className="flex items-center gap-1.5">
-                <BadgeCheck className="h-4 w-4 text-orange-600" />
-                FDA REGISTERED
-            </span>
-        </div>
-    </div>
-</footer>
+            </footer>
         </div>
     );
 };
