@@ -23,7 +23,9 @@ import {
     Banknote,
     Wrench,
     Headset,
-    Hammer
+    Hammer,
+    MessageCircle,
+    Send
 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { Toaster } from 'react-hot-toast';
@@ -296,9 +298,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     <div className="flex items-center gap-10">
                         {/* Logo Wrapper */}
                         <Link href="/" className="flex items-center gap-2">
-                            <div className="flex h-15 w-32 items-center justify-center overflow-hidden">
+                            <div className="flex h-7 w-32 items-center justify-center overflow-hidden">
                                 <img
-                                    src="/assets/axel.png"
+                                    src="/assets/axelmason-logo.png"
                                     alt="AXELMASON Logo"
                                     className="h-full w-auto scale-[2.5] transform object-contain mix-blend-multiply"
                                 />
@@ -358,8 +360,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 className="hidden transition-all hover:text-orange-600 md:flex items-center gap-1"
                             >
                                 <User className="h-5 w-5" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Account</span>
-                            </button>
+                                </button>
 
                             <button
                                 onClick={() => setIsCartDrawerOpen(true)}
@@ -562,191 +563,120 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </main>
 
             {/* --- FOOTER --- */}
-            <footer className="relative bg-slate-950 px-8 pt-24 pb-12 text-white overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-10">
-                    <img
-                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop"
-                        alt="Tough Work Operations Background"
-                        className="w-full h-full object-cover grayscale"
-                    />
-                </div>
+             <footer className="relative bg-slate-950 px-6 pt-20 pb-10 text-white overflow-hidden">
+            {/* Background Texture Overlay */}
+            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+                <img
+                    src="/assets/hero.jpg"
+                    alt="Industrial Background"
+                    className="w-full h-full object-cover grayscale"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-transparent to-slate-950" />
+            </div>
 
-                <div className="relative z-10 mx-auto grid max-w-[1600px] grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
+            <div className="relative z-10 mx-auto max-w-[1400px]">
+                <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+
                     {/* Brand Column */}
-                    <div className="space-y-6">
-                        <div className="flex h-10 w-35 scale-[4.0] transform object-contain items-center justify-center overflow-hidden">
+                    <div className="space-y-8">
+                        <div className="flex items-center">
                             <img
-                                src="/assets/axel.png"
-                                alt="AXELMASON Industrial Logo"
-                                className="h-full w-auto object-contain"
+                                src="/assets/axelmason-logo.png"
+                                alt="AXELMASON"
+                                className="h-8 w-auto object-contain  scale-[2.5] transform object-contain"
                                 style={{
                                     filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(102%)',
                                 }}
                             />
                         </div>
-                        <p className="max-w-xs text-xs leading-relaxed font-bold tracking-tight text-slate-400 uppercase">
+                        <p className="text-[13px] leading-relaxed font-medium tracking-wide text-slate-400 uppercase">
                             Global supplier of certified heavy-duty industrial and medical-grade hardware. Engineering reliability since 1998.
                         </p>
 
-                        <div className="flex flex-col gap-2.5 pt-2">
-                            {[
-                                { icon: <Globe />, t: "Global Logistic" },
-                                { icon: <ShieldCheck />, t: "Certified Gear" },
-                                { icon: <Banknote />, t: "Financing" },
-                                { icon: <Wrench />, t: "Repair" },
-                                { icon: <Headset />, t: "After Sales Support" },
-                                { icon: <Hammer />, t: "Installation" }
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-wider">
-                                    {React.cloneElement(item.icon as React.ReactElement, { className: "h-4 w-4 text-orange-600" })}
-                                    {item.t}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
 
-                    {/* Products Column */}
-                    <div>
-                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                            Shop
-                        </h4>
-                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                            <li>
-                                <Link href={route('products.index')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> All Products
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('deals')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Spotlight Deals
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('quote')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Request Bulk Quote
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('blog')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Technical Bulletins
-                                </Link>
-                            </li>
-                        </ul>
                     </div>
 
                     {/* Capabilities Column */}
                     <div>
-                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                            Capabilities
+                        <h4 className="mb-6 text-[11px] font-black tracking-[0.25em] text-orange-500 uppercase border-l-2 border-orange-600 pl-3">
+                            Operations
                         </h4>
-                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                            <li>
-                                <Link href={route('about')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Global Logistics
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Equipment Financing
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Maintenance & Repair
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> After Sales Support
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Professional Installation
-                                </Link>
-                            </li>
+                        <ul className="space-y-4 text-[11px] font-bold tracking-widest text-slate-400 uppercase">
+                            {['Equipment Financing', 'Maintenance & Repair', 'After Sales Support', 'Professional Installation'].map((item) => (
+                                <li key={item}>
+                                    <Link href="contact" className="group flex items-center gap-2 transition-colors hover:text-white">
+                                        <ChevronRight className="h-3 w-3 text-orange-600 transition-transform group-hover:translate-x-1" />
+                                        {item}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
                     {/* Support & Legal Column */}
                     <div>
-                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                            Support & Legal
+                        <h4 className="mb-6 text-[11px] font-black tracking-[0.25em] text-orange-500 uppercase border-l-2 border-orange-600 pl-3">
+                            Governance
                         </h4>
-                        <ul className="space-y-5 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                            <li>
-                                <Link href={route('about')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> About AXELMASON
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('contact')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Technical Support
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('shipping-policy')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Shipping Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('return-policy')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Returns & Refunds
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('privacy')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Privacy Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('terms')} className="flex items-center gap-2 transition-colors hover:text-white">
-                                    <ChevronRight className="h-3 w-3 text-orange-600" /> Terms & Conditions
-                                </Link>
-                            </li>
+                        <ul className="space-y-4 text-[11px] font-bold tracking-widest text-slate-400 uppercase">
+                            {[
+                                { name: 'About AXELMASON', link: 'about' },
+                                { name: 'Technical Support', link: 'contact' },
+                                { name: 'Shipping Policy', link: 'shipping-policy' },
+                                { name: 'Returns & Refunds', link: 'return-policy' },
+                                { name: 'Privacy Policy', link: 'privacy' },
+                            ].map((item) => (
+                                <li key={item.name}>
+                                    <Link href={item.link} className="group flex items-center gap-2 transition-colors hover:text-white">
+                                        <ChevronRight className="h-3 w-3 text-orange-600 transition-transform group-hover:translate-x-1" />
+                                        {item.name}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
                     {/* Newsletter Column */}
-                    <div>
-                        <h4 className="mb-8 text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                    <div className="bg-white/5 p-6 rounded-xl border border-white/10 backdrop-blur-sm self-start">
+                        <h4 className="mb-4 text-[11px] font-black tracking-[0.25em] text-orange-500 uppercase">
                             Industrial Updates
                         </h4>
-                        <p className="mb-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                            Receive supply chain alerts & new stock notifications.
+                        <p className="mb-6 text-[11px] font-medium leading-relaxed text-slate-400 uppercase">
+                            Sign up for supply chain alerts & stock notifications.
                         </p>
-                        <form className="flex gap-2 rounded-2xl border border-white/10 bg-white/5 p-2" onSubmit={(e) => { e.preventDefault(); }}>
+                        <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
                             <input
                                 type="email"
-                                placeholder="work@company.com"
-                                className="flex-1 border-none bg-transparent px-4 text-xs font-bold text-white placeholder:text-slate-500 focus:ring-0"
-                                aria-label="Work email address"
+                                placeholder="WORK@COMPANY.COM"
+                                className="w-full bg-slate-900 border border-slate-700 px-4 py-3 text-[11px] font-bold text-white placeholder:text-slate-600 focus:outline-none focus:border-orange-600 transition-colors"
                             />
                             <button
                                 type="submit"
-                                className="rounded-xl bg-orange-600 p-4 transition-all hover:bg-orange-500"
-                                aria-label="Subscribe to newsletter"
+                                className="flex items-center justify-center gap-2 w-full bg-orange-600 py-3 px-4 text-[11px] font-black tracking-widest uppercase transition-all hover:bg-orange-500 active:scale-[0.98]"
                             >
-                                <Mail className="h-5 w-5 text-white" />
+                                Subscribe <Send className="h-3.5 w-3.5" />
                             </button>
                         </form>
                     </div>
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="relative z-10 mx-auto mt-20 flex max-w-[1600px] flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-[10px] font-black tracking-widest text-slate-500 uppercase md:flex-row">
-                    <p>© {new Date().getFullYear()} AXELMASON INDUSTRIAL. ALL RIGHTS RESERVED.</p>
-                    <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-1.5">
+                <div className="mt-20 flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 md:flex-row">
+                    <p className="text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase text-center md:text-left">
+                        © {new Date().getFullYear()} AXELMASON INDUSTRIAL. ALL RIGHTS RESERVED.
+                    </p>
+
+                    <div className="flex flex-wrap justify-center items-center gap-6">
+                        <div className="flex items-center gap-2 text-[10px] font-black tracking-widest text-slate-400">
                             <ShieldCheck className="h-4 w-4 text-orange-600" /> ISO 9001 COMPLIANT
-                        </span>
-                        <span className="hidden md:inline text-slate-700">|</span>
-                        <span className="flex items-center gap-1.5">
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] font-black tracking-widest text-slate-400">
                             <BadgeCheck className="h-4 w-4 text-orange-600" /> FDA REGISTERED
-                        </span>
+                        </div>
                     </div>
                 </div>
-            </footer>
+            </div>
+        </footer>
         </div>
     );
 };

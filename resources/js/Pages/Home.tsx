@@ -113,7 +113,7 @@ const Home = ({ featuredProducts = [], collections = [], brands =[], reviews = [
                     <div className="absolute inset-0 z-0">
                         {/* Swapped background for a tough heavy machinery/mining photo */}
                         <img
-                            src="https://images.unsplash.com/photo-1541888087618-20aac2a2eeb8?q=80&w=2070&auto=format&fit=crop"
+                            src="/assets/hero.jpg" // Replace with actual path to your industrial hero image
                             alt="Industrial Heavy Machinery Tough Work"
                             className="w-full h-full object-cover opacity-30"
                         />
