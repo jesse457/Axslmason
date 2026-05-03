@@ -400,7 +400,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     <Link href="/" className="flex items-center gap-2">
                         <div className="flex h-15 w-32 items-center justify-center overflow-hidden">
                             <img
-                                src="/assets/axel.png"
+                                src="/assets/axelmason-logo.png"
                                 alt="AXELMASON Industrial Logo"
                                 className="h-full w-auto scale-[2.5] transform object-contain"
                                 style={{
