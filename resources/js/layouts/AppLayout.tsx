@@ -402,7 +402,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             <img
                                 src="/assets/axelmason-logo.png"
                                 alt="AXELMASON Industrial Logo"
-                                className="h-full w-auto scale-[2.5] transform object-contain"
+                                className="h-8 w-auto scale-[2.5] transform object-contain"
                                 style={{
                                     filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(102%)',
                                 }}
